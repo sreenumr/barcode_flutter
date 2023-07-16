@@ -1,6 +1,7 @@
 import 'package:barcode_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -12,10 +13,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void _incrementCounter() {
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -28,12 +25,33 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(appState.selectedFile),
+            Text(appState.selectedFileName),
             ElevatedButton(
                 onPressed: () {
                   appState.pickFile();
                 },
-                child: const Text("Browse"))
+                child: const Text("Browse")),
+            ElevatedButton(
+                onPressed: () {
+                  appState.generateQRCode();
+                },
+                child: const Text("Generate Code")),
+            if (appState.QrData.isNotEmpty)
+              RepaintBoundary(
+                  key: appState.globalKey,
+                  child: QrImageView(
+                    data: appState.QrData,
+                    version: QrVersions.max,
+                    size: 200,
+                    errorStateBuilder: (cxt, err) {
+                      return const Center(
+                        child: Text(
+                          'Uh oh! Something went wrong...',
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    },
+                  ))
           ],
         ),
       ),
