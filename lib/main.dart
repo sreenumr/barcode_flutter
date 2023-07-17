@@ -13,6 +13,7 @@ import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:barcode/barcode.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'barcode_navigator.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,15 +28,16 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-        title: 'Namer App',
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        ),
-        home: const MyHomePage(
-          title: "Home",
-        ),
-      ),
+          title: 'Namer App',
+          theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          ),
+          home: const BarcodeNavigator()
+          // home: const MyHomePage(
+          //   title: "Home",
+          // ),
+          ),
     );
   }
 }
