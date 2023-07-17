@@ -65,41 +65,64 @@ class MyAppState extends ChangeNotifier {
   }
 
   void generateQRCode() async {
+    var binaryData = await readFileAsBinary(selectedFilePath);
     var byteData = await readFileAsBytes(selectedFilePath);
-    QrData = byteData;
-    // Create a DataMatrix barcode
-    final dm = Barcode.qrCode();
-    final svg = dm.toSvg(byteData, width: 200, height: 200);
-    // Save the image
-    // await Permission.storage.request();
 
-    var status = await Permission.manageExternalStorage.request();
-    var status1 = await Permission.storage.request();
+    // var unicode = utf8.encode(byteData);
+    var GZIPcompressed = gzip.encode(byteData);
+    var ZLIBcompressed = zlib.encode(byteData);
 
-    print("PERMISSION STATUSES");
-    print(status);
-    print(status1);
+    // compressedData =
+    // var unicode = utf8.encode(binaryData);
+
+    // var base64Data = base64Encode(byteData);
+    // var base64Unicode = utf8.encode(base64Data);
+    // var base64UnicodeCompressed = zlib.encode(base64Unicode);
+    // var GZIPcompressed = gzip.encode(unicode);
+    // var ZLIBcompressed = zlib.encode(unicode);
+
+    // var base64Compressed = gzip.encode(base64Data);
+    // var BASE64ZLIBcompressed = zlib.encode(base64);
+    // var compressed = bvm.print('Original ${binaryData.length} bytes');
+
+    // print('Binary $binaryData');
+    // print('Unicode $unicode');
+    // print('Base64 $base64');
+    // print('Unicode  ${unicode.length} bytes');
+    // print('Base64  ${base64Data.length} bytes');
+    // print('base64Unicode  ${base64Unicode.length} bytes');
+    // print('base64UnicodeCompressed  ${base64UnicodeCompressed.length} bytes');
+
+    print('Bytes  ${byteData.length} bytes');
+    print('GZIPcompressed ${GZIPcompressed.length} bytes');
+    print('ZLIBcompressed ${ZLIBcompressed.length} bytes');
+
+    QrData = ZLIBcompressed.join("");
+
+    final barcode = Barcode.qrCode();
+    // final png = svg.to
+    final svg = barcode.toSvg(ZLIBcompressed.join(""), width: 100, height: 100);
+    await Permission.manageExternalStorage.request();
+    await Permission.storage.request();
 
     await File('/storage/emulated/0/flutter_qr_image.svg').writeAsString(svg);
-    // _captureAndSharePng();
     notifyListeners();
   }
 
-  Future<void> _captureAndSharePng() async {
+  Future<void> captureAndSharePng() async {
     try {
       RenderRepaintBoundary? boundary = globalKey.currentContext!
           .findRenderObject() as RenderRepaintBoundary?;
       var image = await boundary!.toImage();
       ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData!.buffer.asUint8List();
+
       final file =
-          await File('//storage//emulated//0//flutter_qr_image.png').create();
+          await File('/storage/emulated/0/flutter_qr_image.png').create();
       await file.writeAsBytes(pngBytes);
 
-      // final channel = const MethodChannel('channel:me.alfian.share/share');
-      // channel.invokeMethod('shareFile', 'image.png');
+      // await Share.file(_dataString, '$_dataString.png', pngBytes, 'image/png');
     } catch (e) {
-      print("ERROR");
       print(e.toString());
     }
   }

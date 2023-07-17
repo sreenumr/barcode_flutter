@@ -34,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
                 onPressed: () {
                   appState.generateQRCode();
+                  appState.captureAndSharePng();
                 },
                 child: const Text("Generate Code")),
             if (appState.QrData.isNotEmpty)
