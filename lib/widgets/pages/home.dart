@@ -35,25 +35,31 @@ class _MyHomePageState extends State<MyHomePage> {
               (ElevatedButton(
                   onPressed: () {
                     appState.generateQRCode();
-                    appState.captureAndSharePng();
                   },
                   child: const Text("Generate Code"))),
             if (appState.QrData.isNotEmpty)
-              RepaintBoundary(
-                  key: appState.globalKey,
-                  child: QrImageView(
-                    data: appState.QrData,
-                    version: QrVersions.max,
-                    size: 200,
-                    errorStateBuilder: (cxt, err) {
-                      return const Center(
-                        child: Text(
-                          'Uh oh! Something went wrong...',
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    },
-                  ))
+              Column(
+                children: [
+                  RepaintBoundary(
+                      key: appState.globalKey,
+                      child: QrImageView(
+                        data: appState.QrData,
+                        version: QrVersions.max,
+                        size: 200,
+                        errorStateBuilder: (cxt, err) {
+                          return const Center(
+                            child: Text(
+                              'Uh oh! Something went wrong...',
+                              textAlign: TextAlign.center,
+                            ),
+                          );
+                        },
+                      )),
+                  ElevatedButton(
+                      onPressed: appState.captureAndSharePng,
+                      child: const Text("Save QR Code"))
+                ],
+              )
           ],
         ),
       ),

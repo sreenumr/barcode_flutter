@@ -23,6 +23,7 @@ class ScanPageState extends State<ScanPage> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
   QRViewController? controller;
+  @override
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
@@ -34,9 +35,6 @@ class ScanPageState extends State<ScanPage> {
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    // var result = "";
-
     return Scaffold(
       body: Column(
         children: <Widget>[
@@ -53,7 +51,7 @@ class ScanPageState extends State<ScanPage> {
               child: (result != null)
                   ? Text(
                       'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}')
-                  : Text('Scan a code'),
+                  : const Text('Scan a code'),
             ),
           )
         ],
