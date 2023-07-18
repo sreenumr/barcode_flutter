@@ -106,6 +106,7 @@ class MyAppState extends ChangeNotifier {
     final svg = barcode.toSvg(ZLIBcompressed.join(""), width: 100, height: 100);
     await Permission.manageExternalStorage.request();
     await Permission.storage.request();
+    await Permission.camera.request();
 
     await File('/storage/emulated/0/flutter_qr_image.svg').writeAsString(svg);
     notifyListeners();

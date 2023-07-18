@@ -31,12 +31,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   appState.pickFile();
                 },
                 child: const Text("Browse")),
-            ElevatedButton(
-                onPressed: () {
-                  appState.generateQRCode();
-                  appState.captureAndSharePng();
-                },
-                child: const Text("Generate Code")),
+            if (appState.selectedFileName.isNotEmpty)
+              (ElevatedButton(
+                  onPressed: () {
+                    appState.generateQRCode();
+                    appState.captureAndSharePng();
+                  },
+                  child: const Text("Generate Code"))),
             if (appState.QrData.isNotEmpty)
               RepaintBoundary(
                   key: appState.globalKey,

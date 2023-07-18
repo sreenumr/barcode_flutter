@@ -42,6 +42,10 @@ dependencies:
   path_provider: ^2.0.15
   barcode: ^2.2.4
   permission_handler: ^10.4.3
+  # mobile_scanner: ^3.3.0
+  camera: ^0.10.5+2
+  qr_code_scanner: ^1.0.1
+  # simple_barcode_scanner: ^0.0.8
 
 dev_dependencies:
   flutter_test:
