@@ -1,13 +1,7 @@
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:barcode_app/main.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-// import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
-// import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class ScanPage extends StatefulWidget {
@@ -21,7 +15,8 @@ class ScanPage extends StatefulWidget {
 
 class ScanPageState extends State<ScanPage> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  Barcode? result;
+  Set<Barcode> result = {};
+  Set<String?> resultCodeSet = {};
   QRViewController? controller;
   @override
   void reassemble() {
@@ -49,8 +44,10 @@ class ScanPageState extends State<ScanPage> {
             flex: 1,
             child: Center(
               child: (result != null)
-                  ? Text(
-                      'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}')
+                  ? ListView(
+                      padding: const EdgeInsets.all(8),
+                      children: [for (var res in resultCodeSet) Text('$res')])
+                  // ? Text('${result!.code}')
                   : const Text('Scan a code'),
             ),
           )
@@ -63,7 +60,9 @@ class ScanPageState extends State<ScanPage> {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
       setState(() {
-        result = scanData;
+        print("RESULT $result");
+        result.add(scanData);
+        resultCodeSet.add(scanData.code);
       });
     });
   }
