@@ -46,10 +46,17 @@ class MyAppState extends ChangeNotifier {
   var selectedFileName = "";
   var selectedFilePath = "";
   var QrData = "";
+  var isLoading = false;
+  var renderError = false;
+  var qrRenderErrorMsg = "";
+
   GlobalKey globalKey = GlobalKey();
 
   void pickFile() async {
     try {
+      await Permission.manageExternalStorage.request();
+      await Permission.storage.request();
+      await Permission.camera.request();
       // requestFilePermission();
       final result = await FilePicker.platform.pickFiles(allowMultiple: false);
       print("RESULT CODE FOR FILE PICKING");
@@ -67,21 +74,26 @@ class MyAppState extends ChangeNotifier {
   }
 
   void generateQRCode() async {
+    isLoading = true;
+
     var binaryData = await readFileAsBinary(selectedFilePath);
     var byteData = await readFileAsBytes(selectedFilePath);
 
     // var unicode = utf8.encode(byteData);
-    var GZIPcompressed = gzip.encode(byteData);
-    var ZLIBcompressed = zlib.encode(byteData);
+    var GZIPcompressedByteData = gzip.encode(byteData);
+    var ZLIBcompressedByteData = zlib.encode(byteData);
+
+    var unicode = utf8.encode(binaryData);
+    var GZIPcompressedBinaryData = gzip.encode(unicode);
+    var ZLIBcompressedBinaryData = zlib.encode(unicode);
 
     // compressedData =
-    // var unicode = utf8.encode(binaryData);
 
-    // var base64Data = base64Encode(byteData);
-    // var base64Unicode = utf8.encode(base64Data);
+    var base64Data = base64Encode(byteData);
+    var base64Unicode = utf8.encode(base64Data);
     // var base64UnicodeCompressed = zlib.encode(base64Unicode);
-    // var GZIPcompressed = gzip.encode(unicode);
-    // var ZLIBcompressed = zlib.encode(unicode);
+    var GZIPcompressedBase64Data = gzip.encode(base64Unicode);
+    var ZLIBcompressedBase64Data = zlib.encode(base64Unicode);
 
     // var base64Compressed = gzip.encode(base64Data);
     // var BASE64ZLIBcompressed = zlib.encode(base64);
@@ -96,19 +108,38 @@ class MyAppState extends ChangeNotifier {
     // print('base64UnicodeCompressed  ${base64UnicodeCompressed.length} bytes');
 
     print('Bytes  ${byteData.length} bytes');
-    print('GZIPcompressed ${GZIPcompressed.length} bytes');
-    print('ZLIBcompressed ${ZLIBcompressed.length} bytes');
+    print('GZIPcompressed ${GZIPcompressedByteData.length} bytes');
+    print('ZLIBcompressed ${ZLIBcompressedByteData.length} bytes');
 
-    QrData = ZLIBcompressed.join("");
+    print('Binary  ${unicode.length} bytes');
+    print('GZIPcompressedBinaryData ${GZIPcompressedBase64Data.length} bytes');
+    print('ZLIBcompressedBinaryData ${ZLIBcompressedBase64Data.length} bytes');
 
-    final barcode = Barcode.qrCode();
-    // final png = svg.to
-    final svg = barcode.toSvg(ZLIBcompressed.join(""), width: 100, height: 100);
-    await Permission.manageExternalStorage.request();
-    await Permission.storage.request();
-    await Permission.camera.request();
+    print('Base64  ${base64Data.length} bytes');
+    print('GZIPcompressedBase64Data ${GZIPcompressedBinaryData.length} bytes');
+    print('ZLIBcompressedBase64Data ${ZLIBcompressedBinaryData.length} bytes');
 
-    await File('/storage/emulated/0/flutter_qr_image.svg').writeAsString(svg);
+    try {
+      final barcode = Barcode.qrCode(
+          typeNumber: 40, errorCorrectLevel: BarcodeQRCorrectionLevel.low);
+      QrData = ZLIBcompressedByteData.join("");
+      // final png = svg.to
+      final svg = barcode.toSvg(ZLIBcompressedByteData.join(""),
+          width: 100, height: 100);
+
+      // await File('/storage/emulated/0/flutter_qr_image.svg').writeAsString(svg);
+
+      isLoading = false;
+    } on InputTooLongException catch (e) {
+      renderError = true;
+      qrRenderErrorMsg = "File too big to convert";
+      print('An error occurred: $e');
+      isLoading = false;
+    } catch (e) {
+      renderError = true;
+      print('An error occurred: $e');
+      isLoading = false;
+    }
     notifyListeners();
   }
 

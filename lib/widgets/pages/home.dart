@@ -40,24 +40,36 @@ class _MyHomePageState extends State<MyHomePage> {
             if (appState.QrData.isNotEmpty)
               Column(
                 children: [
-                  RepaintBoundary(
-                      key: appState.globalKey,
-                      child: QrImageView(
-                        data: appState.QrData,
-                        version: QrVersions.max,
-                        size: 200,
-                        errorStateBuilder: (cxt, err) {
-                          return const Center(
-                            child: Text(
-                              'Uh oh! Something went wrong...',
-                              textAlign: TextAlign.center,
-                            ),
-                          );
-                        },
-                      )),
-                  ElevatedButton(
-                      onPressed: appState.captureAndSharePng,
-                      child: const Text("Save QR Code"))
+                  if (appState.isLoading == true)
+                    const CircularProgressIndicator(),
+                  if (appState.renderError)
+                    Center(
+                      child: Text(
+                        appState.qrRenderErrorMsg,
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  else
+                    RepaintBoundary(
+                        key: appState.globalKey,
+                        child: QrImageView(
+                          data: appState.QrData,
+                          version: QrVersions.auto,
+                          errorCorrectionLevel: QrErrorCorrectLevel.L,
+                          size: 200,
+                          errorStateBuilder: (cxt, err) {
+                            return Center(
+                              child: Text(
+                                appState.qrRenderErrorMsg,
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          },
+                        )),
+                  if (appState.renderError == false)
+                    ElevatedButton(
+                        onPressed: appState.captureAndSharePng,
+                        child: const Text("Save QR Code"))
                 ],
               )
           ],
