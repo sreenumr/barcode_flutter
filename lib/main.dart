@@ -14,6 +14,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:barcode/barcode.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'barcode_navigator.dart';
+import 'package:qr/qr.dart';
 
 void main() {
   runApp(const MyApp());
@@ -49,6 +50,9 @@ class MyAppState extends ChangeNotifier {
   var isLoading = false;
   var renderError = false;
   var qrRenderErrorMsg = "";
+  var qrImage;
+  var qrCode;
+  List<String> splitCodes = [];
 
   GlobalKey globalKey = GlobalKey();
 
@@ -107,25 +111,30 @@ class MyAppState extends ChangeNotifier {
     // print('base64Unicode  ${base64Unicode.length} bytes');
     // print('base64UnicodeCompressed  ${base64UnicodeCompressed.length} bytes');
 
-    print('Bytes  ${byteData.length} bytes');
-    print('GZIPcompressed ${GZIPcompressedByteData.length} bytes');
-    print('ZLIBcompressed ${ZLIBcompressedByteData.length} bytes');
+    // print('Bytes  ${byteData.length} bytes');
+    // print('GZIPcompressed ${GZIPcompressedByteData.length} bytes');
+    // print('ZLIBcompressed ${ZLIBcompressedByteData.length} bytes');
 
-    print('Binary  ${unicode.length} bytes');
-    print('GZIPcompressedBinaryData ${GZIPcompressedBase64Data.length} bytes');
-    print('ZLIBcompressedBinaryData ${ZLIBcompressedBase64Data.length} bytes');
+    // print('Binary  ${unicode.length} bytes');
+    // print('GZIPcompressedBinaryData ${GZIPcompressedBase64Data.length} bytes');
+    // print('ZLIBcompressedBinaryData ${ZLIBcompressedBase64Data.length} bytes');
 
-    print('Base64  ${base64Data.length} bytes');
-    print('GZIPcompressedBase64Data ${GZIPcompressedBinaryData.length} bytes');
-    print('ZLIBcompressedBase64Data ${ZLIBcompressedBinaryData.length} bytes');
+    // print('Base64  ${base64Data.length} bytes');
+    // print('GZIPcompressedBase64Data ${GZIPcompressedBinaryData.length} bytes');
+    // print('ZLIBcompressedBase64Data ${ZLIBcompressedBinaryData.length} bytes');
 
     try {
       final barcode = Barcode.qrCode(
           typeNumber: 40, errorCorrectLevel: BarcodeQRCorrectionLevel.low);
       QrData = ZLIBcompressedByteData.join("");
       // final png = svg.to
-      final svg = barcode.toSvg(ZLIBcompressedByteData.join(""),
-          width: 100, height: 100);
+      // QrData = "Happy Birthday to You";
+      int chunkSize = 23648;
+      splitCodes = await splitWithCount(QrData, chunkSize);
+      qrCode = QrCode(QrVersions.max, QrErrorCorrectLevel.L);
+      qrImage = QrImage(qrCode);
+      // final svg = barcode.toSvg(ZLIBcompressedByteData.join(""),
+      //     width: 100, height: 100);
 
       // await File('/storage/emulated/0/flutter_qr_image.svg').writeAsString(svg);
 

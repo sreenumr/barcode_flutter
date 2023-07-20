@@ -52,20 +52,36 @@ class _MyHomePageState extends State<MyHomePage> {
                   else
                     RepaintBoundary(
                         key: appState.globalKey,
-                        child: QrImageView(
-                          data: appState.QrData,
-                          version: QrVersions.auto,
-                          errorCorrectionLevel: QrErrorCorrectLevel.L,
-                          size: 200,
-                          errorStateBuilder: (cxt, err) {
-                            return Center(
-                              child: Text(
-                                appState.qrRenderErrorMsg,
-                                textAlign: TextAlign.center,
-                              ),
-                            );
-                          },
+                        child: GridView.count(
+                          crossAxisCount: 2,
+                          shrinkWrap: true,
+                          children: <Widget>[
+                            for (final codeData in appState.splitCodes) ...[
+                              if (codeData.length <= 23648)
+                                QrImageView.withQr(
+                                    qr: appState.qrCode,
+                                    version: QrVersions.auto,
+                                    errorCorrectionLevel: QrErrorCorrectLevel.L,
+                                    size: 100)
+                              else
+                                Text(codeData.length.toString())
+                            ]
+                          ],
                         )),
+                  // QrImageView(
+                  //   data: appState.QrData,
+                  //   version: QrVersions.auto,
+                  //   errorCorrectionLevel: QrErrorCorrectLevel.L,
+                  //   size: 200,
+                  //   errorStateBuilder: (cxt, err) {
+                  //     return Center(
+                  //       child: Text(
+                  //         appState.qrRenderErrorMsg,
+                  //         textAlign: TextAlign.center,
+                  //       ),
+                  //     );
+                  //   },
+                  // )),
                   if (appState.renderError == false)
                     ElevatedButton(
                         onPressed: appState.captureAndSharePng,
