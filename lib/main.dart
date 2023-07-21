@@ -53,6 +53,7 @@ class MyAppState extends ChangeNotifier {
   var qrImage;
   var qrCode;
   List<String> splitCodes = [];
+  List<QrCode> codes = [];
 
   GlobalKey globalKey = GlobalKey();
 
@@ -106,7 +107,7 @@ class MyAppState extends ChangeNotifier {
     // print('Binary $binaryData');
     // print('Unicode $unicode');
     // print('Base64 $base64');
-    // print('Unicode  ${unicode.length} bytes');
+    print('Unicode  ${unicode.length} bytes');
     // print('Base64  ${base64Data.length} bytes');
     // print('base64Unicode  ${base64Unicode.length} bytes');
     // print('base64UnicodeCompressed  ${base64UnicodeCompressed.length} bytes');
@@ -114,6 +115,7 @@ class MyAppState extends ChangeNotifier {
     // print('Bytes  ${byteData.length} bytes');
     // print('GZIPcompressed ${GZIPcompressedByteData.length} bytes');
     // print('ZLIBcompressed ${ZLIBcompressedByteData.length} bytes');
+    // print('ZLIBcompressed ${ZLIBcompressedByteData} bytes');
 
     // print('Binary  ${unicode.length} bytes');
     // print('GZIPcompressedBinaryData ${GZIPcompressedBase64Data.length} bytes');
@@ -127,12 +129,18 @@ class MyAppState extends ChangeNotifier {
       final barcode = Barcode.qrCode(
           typeNumber: 40, errorCorrectLevel: BarcodeQRCorrectionLevel.low);
       QrData = ZLIBcompressedByteData.join("");
+      print("Length of QR data = ${QrData.length}");
       // final png = svg.to
       // QrData = "Happy Birthday to You";
-      int chunkSize = 23648;
+      int chunkSize = 2953;
+      print(chunkSize);
       splitCodes = await splitWithCount(QrData, chunkSize);
-      qrCode = QrCode(QrVersions.max, QrErrorCorrectLevel.L);
-      qrImage = QrImage(qrCode);
+      for (final code in splitCodes) {
+        qrCode = QrCode(QrVersions.max, QrErrorCorrectLevel.L)..addData(code);
+        codes.add(qrCode);
+      }
+
+      // qrImage = QrImage(qrCode);
       // final svg = barcode.toSvg(ZLIBcompressedByteData.join(""),
       //     width: 100, height: 100);
 

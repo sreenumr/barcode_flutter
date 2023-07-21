@@ -37,6 +37,7 @@ Future<List<String>> splitWithCount(String input, int chunkSize) async {
   List<String> output = [];
   int start = 0;
   int end = 0;
+
   // int currentChunkSize = 0;
   print("Input length = ${input.length}");
   // print("Splitting $input of length ${input.length}");

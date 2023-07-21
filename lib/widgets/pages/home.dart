@@ -56,32 +56,16 @@ class _MyHomePageState extends State<MyHomePage> {
                           crossAxisCount: 2,
                           shrinkWrap: true,
                           children: <Widget>[
-                            for (final codeData in appState.splitCodes) ...[
-                              if (codeData.length <= 23648)
-                                QrImageView.withQr(
-                                    qr: appState.qrCode,
-                                    version: QrVersions.auto,
-                                    errorCorrectionLevel: QrErrorCorrectLevel.L,
-                                    size: 100)
-                              else
-                                Text(codeData.length.toString())
+                            for (final code in appState.splitCodes) ...[
+                              // if (codeData.length <= 23648)
+                              QrImageView(
+                                  data: code,
+                                  version: QrVersions.auto,
+                                  errorCorrectionLevel: QrErrorCorrectLevel.L,
+                                  size: 50)
                             ]
                           ],
                         )),
-                  // QrImageView(
-                  //   data: appState.QrData,
-                  //   version: QrVersions.auto,
-                  //   errorCorrectionLevel: QrErrorCorrectLevel.L,
-                  //   size: 200,
-                  //   errorStateBuilder: (cxt, err) {
-                  //     return Center(
-                  //       child: Text(
-                  //         appState.qrRenderErrorMsg,
-                  //         textAlign: TextAlign.center,
-                  //       ),
-                  //     );
-                  //   },
-                  // )),
                   if (appState.renderError == false)
                     ElevatedButton(
                         onPressed: appState.captureAndSharePng,
