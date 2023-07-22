@@ -60,7 +60,7 @@ class ScanPageState extends State<ScanPage> {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
       setState(() {
-        print("RESULT $result");
+        print("RESULT ${scanData.code}");
         result.add(scanData);
         resultCodeSet.add(scanData.code);
       });
