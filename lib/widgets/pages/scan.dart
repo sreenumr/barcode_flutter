@@ -22,6 +22,8 @@ class ScanPageState extends State<ScanPage> {
   Set<String?> resultCodeSet = {};
   String barcodeOutput = "";
   QRViewController? controller;
+  int totalChunksScanned = 0;
+  int totalChunks = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,7 @@ class ScanPageState extends State<ScanPage> {
                         for (final res in resultCodeSet) Text("Code $res")
                       ],
                     )
-                  : Text('Scan a code'),
+                  : const Text('Scan a code'),
             ),
           )
         ],
@@ -67,6 +69,13 @@ class ScanPageState extends State<ScanPage> {
         result.add(scanData);
         result.add(scanData);
         resultCodeSet.add(scanData.code);
+        if (resultCodeSet.isNotEmpty) {
+          totalChunks = int.parse(
+              resultCodeSet.first!.substring(resultCodeSet.first!.length - 1));
+        }
+        print("Total Chunks ${totalChunks}");
+
+        // totalChunks = resultCodeSet.last.substring(resultCodeSet.last.length - 1);
         print(scanData.code);
       });
     });

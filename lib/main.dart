@@ -183,7 +183,7 @@ class MyAppState extends ChangeNotifier {
 
   // void decodeQRCodes(List<String> qrStringList) {
   //   List<int> qrIntList = [];
-  //   //ext pos no of chunks
+  //   //ext pos noofchunks
   //   qrStringList.sort((a,b)=>a.)
   //   for (final qrData in qrStringList) {
   //     // var intData = qrData.split("").map((data) => int.parse(data)).toList();
