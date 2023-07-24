@@ -36,24 +36,26 @@ class CodePageState extends State<CodePage> {
             )
           else
             RepaintBoundary(
-              key: appState.globalKey,
-              child: GridView.count(
-                crossAxisCount: 1,
-                shrinkWrap: true,
-                primary: false,
-                children: <Widget>[
-                  for (final code in appState.splitCodes) ...[
-                    Center(
-                        child: QrImageView(
-                            padding: EdgeInsets.all(10.0),
-                            data: code,
-                            version: QrVersions.auto,
-                            errorCorrectionLevel: QrErrorCorrectLevel.L,
-                            size: 300))
-                  ]
-                ],
-              ),
-            ),
+                key: appState.globalKey,
+                child: Container(
+                  color: Colors.white,
+                  child: GridView.count(
+                    crossAxisCount: 1,
+                    shrinkWrap: true,
+                    primary: false,
+                    children: <Widget>[
+                      for (final code in appState.splitCodes) ...[
+                        Center(
+                            child: QrImageView(
+                                padding: EdgeInsets.all(10.0),
+                                data: code,
+                                version: QrVersions.auto,
+                                errorCorrectionLevel: QrErrorCorrectLevel.L,
+                                size: 300))
+                      ]
+                    ],
+                  ),
+                )),
           if (appState.renderError == false)
             ElevatedButton(
                 onPressed: appState.captureAndSharePng,
