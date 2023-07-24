@@ -33,25 +33,40 @@ Future<bool> requestFilePermission() async {
   return false;
 }
 
-Future<List<String>> splitWithCount(String input, int chunkSize) async {
+Future<List<String>> splitWithCount(
+    String input, int chunkSize, dynamic selectedFile) async {
   List<String> output = [];
   int start = 0;
   int end = 0;
+  int pos = 0;
+  int maxCharsForChunkNum = 1;
+  int extLength = selectedFile.extension.length;
 
   // int currentChunkSize = 0;
   print("Input length = ${input.length}");
+  print("Selected File ${selectedFile.extension}");
   // print("Splitting $input of length ${input.length}");
   try {
     while (start <= input.length) {
       end = start + chunkSize;
       if (end > input.length) end = input.length;
-      output.add(input.substring(start, end));
+      if (input.substring(start, end).isNotEmpty) {
+        var string =
+            input.substring(start, end - 1 - maxCharsForChunkNum - extLength) +
+                selectedFile.extension +
+                pos.toString();
+        pos++;
+        output.add(string);
+      }
       // print("Creating chunk ${input.substring(start, end)}");
       start += chunkSize;
     }
 
-    for (final val in output) {
-      print(val.length);
+    for (int i = 0; i < output.length; i++) {
+      output[i] = output[i] + output.length.toString();
+    }
+    for (int i = 0; i < output.length; i++) {
+      print("Value of QR code before generation : ${output[i]}");
     }
   } catch (e) {
     print("An error occurred $e");

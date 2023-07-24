@@ -23,47 +23,43 @@ class CodePageState extends State<CodePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (appState.QrData.isNotEmpty)
-              Column(
-                children: [
-                  if (appState.isLoading == true)
-                    const CircularProgressIndicator(),
-                  if (appState.renderError)
+          child: ListView(
+        scrollDirection: Axis.vertical,
+        children: [
+          if (appState.isLoading == true) const CircularProgressIndicator(),
+          if (appState.renderError)
+            Center(
+              child: Text(
+                appState.qrRenderErrorMsg,
+                textAlign: TextAlign.center,
+              ),
+            )
+          else
+            RepaintBoundary(
+              key: appState.globalKey,
+              child: GridView.count(
+                crossAxisCount: 1,
+                shrinkWrap: true,
+                primary: false,
+                children: <Widget>[
+                  for (final code in appState.splitCodes) ...[
                     Center(
-                      child: Text(
-                        appState.qrRenderErrorMsg,
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  else
-                    RepaintBoundary(
-                        key: appState.globalKey,
-                        child: GridView.count(
-                          crossAxisCount: 2,
-                          shrinkWrap: true,
-                          children: <Widget>[
-                            for (final code in appState.splitCodes) ...[
-                              // if (codeData.length <= 23648)
-                              QrImageView(
-                                  data: code,
-                                  version: QrVersions.auto,
-                                  errorCorrectionLevel: QrErrorCorrectLevel.L,
-                                  size: 50)
-                            ]
-                          ],
-                        )),
-                  if (appState.renderError == false)
-                    ElevatedButton(
-                        onPressed: appState.captureAndSharePng,
-                        child: const Text("Save QR Code"))
+                        child: QrImageView(
+                            padding: EdgeInsets.all(10.0),
+                            data: code,
+                            version: QrVersions.auto,
+                            errorCorrectionLevel: QrErrorCorrectLevel.L,
+                            size: 300))
+                  ]
                 ],
-              )
-          ],
-        ),
-      ),
+              ),
+            ),
+          if (appState.renderError == false)
+            ElevatedButton(
+                onPressed: appState.captureAndSharePng,
+                child: const Text("Save QR Code"))
+        ],
+      )),
     );
   }
 }

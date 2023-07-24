@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
+  var selectedFile;
   var selectedFileName = "";
   var selectedFilePath = "";
   var QrData = "";
@@ -64,14 +66,14 @@ class MyAppState extends ChangeNotifier {
       await Permission.camera.request();
       // requestFilePermission();
       final result = await FilePicker.platform.pickFiles(allowMultiple: false);
-      print("RESULT CODE FOR FILE PICKING");
-      print(result);
       if (result == null) return;
 
+      selectedFile = result.files.first;
       selectedFileName = result.files.first.name;
       selectedFilePath = result.files.first.path!;
       // print(result.files.first.size);
       // print(result.files.first.path);
+      print("Extension = ${selectedFile.extension}");
       notifyListeners();
     } catch (e) {
       print(e);
@@ -82,6 +84,7 @@ class MyAppState extends ChangeNotifier {
     isLoading = true;
 
     var binaryData = await readFileAsBinary(selectedFilePath);
+    // var selectedFileExt =
     var byteData = await readFileAsBytes(selectedFilePath);
 
     // var unicode = utf8.encode(byteData);
@@ -107,7 +110,7 @@ class MyAppState extends ChangeNotifier {
     // print('Binary $binaryData');
     // print('Unicode $unicode');
     // print('Base64 $base64');
-    print('Unicode  ${unicode.length} bytes');
+    // print('Unicode  ${unicode.length} bytes');
     // print('Base64  ${base64Data.length} bytes');
     // print('base64Unicode  ${base64Unicode.length} bytes');
     // print('base64UnicodeCompressed  ${base64UnicodeCompressed.length} bytes');
@@ -129,12 +132,12 @@ class MyAppState extends ChangeNotifier {
       final barcode = Barcode.qrCode(
           typeNumber: 40, errorCorrectLevel: BarcodeQRCorrectionLevel.low);
       QrData = ZLIBcompressedByteData.join("");
-      print("Length of QR data = ${QrData.length}");
+      // print("Length of QR data = ${QrData.length}");
       // final png = svg.to
       // QrData = "Happy Birthday to You";
       int chunkSize = 2953;
       print(chunkSize);
-      splitCodes = await splitWithCount(QrData, chunkSize);
+      splitCodes = await splitWithCount(QrData, chunkSize, selectedFile);
       for (final code in splitCodes) {
         qrCode = QrCode(QrVersions.max, QrErrorCorrectLevel.L)..addData(code);
         codes.add(qrCode);
@@ -177,4 +180,17 @@ class MyAppState extends ChangeNotifier {
       print(e.toString());
     }
   }
+
+  // void decodeQRCodes(List<String> qrStringList) {
+  //   List<int> qrIntList = [];
+  //   //ext pos no of chunks
+  //   qrStringList.sort((a,b)=>a.)
+  //   for (final qrData in qrStringList) {
+  //     // var intData = qrData.split("").map((data) => int.parse(data)).toList();
+  //     var
+  //     qrIntList = qrIntList + intData;
+  //   }
+
+  //   var decompressedData
+  // }
 }

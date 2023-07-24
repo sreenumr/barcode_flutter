@@ -45,6 +45,8 @@ dependencies:
   # mobile_scanner: ^3.3.0
   camera: ^0.10.5+2
   qr_code_scanner: ^1.0.1
+  mobile_scanner: ^3.3.0
+  simple_barcode_scanner: ^0.0.8
   # simple_barcode_scanner: ^0.0.8
 
 dev_dependencies:
