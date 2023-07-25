@@ -74,7 +74,12 @@ class ScanPageState extends State<ScanPage> {
                             Text(
                                 "Total Scanned = ${resultCodeSet.length}/$totalChunks")
                           ],
-                        )
+                        ),
+                        if (resultCodeSet.length == totalChunks &&
+                            (totalChunks != 0))
+                          ElevatedButton(
+                              onPressed: appState.decodeQRCodes,
+                              child: const Text("Click to generate file"))
                       ],
                     ))
                   : const Text('Scan a code'),
@@ -99,7 +104,7 @@ class ScanPageState extends State<ScanPage> {
               resultCodeSet.first!.substring(resultCodeSet.first!.length - 1));
         }
 
-        log(scanData.code!);
+        // log(scanData.code!);
 
         // totalChunks = resultCodeSet.last.substring(resultCodeSet.last.length - 1);
       });
@@ -117,7 +122,7 @@ class ScanPageState extends State<ScanPage> {
         totalChunks = int.parse(
             resultCodeSet.first!.substring(resultCodeSet.first!.length - 1));
       }
-      print("Total Chunks ${totalChunks}");
+      // print("Total Chunks ${totalChunks}");
 
       // totalChunks = resultCodeSet.last.substring(resultCodeSet.last.length - 1);
     });

@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'dart:developer';
 
 import 'package:barcode_app/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -182,16 +183,37 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
-  // void decodeQRCodes(List<String> qrStringList) {
-  //   List<int> qrIntList = [];
-  //   //ext pos noofchunks
-  //   qrStringList.sort((a,b)=>a.)
-  //   for (final qrData in qrStringList) {
-  //     // var intData = qrData.split("").map((data) => int.parse(data)).toList();
-  //     var
-  //     qrIntList = qrIntList + intData;
-  //   }
+  void decodeQRCodes() {
+    print("Decoding QR codes");
+    // List<int> qrIntList = [];
+    // //ext pos noofchunks
+    List<String?> qrCodesList = resultCodeSet.toList();
+    var charsForChunk = 1;
+    // qrCodesList.sort((a, b) => {
+    //   // var posA = int.parse(a[a.length - charsForChunk - 1]);
+    //   // var posB = int.parse(a[a.length - charsForChunk - 1]);
+    //   return a.compareTo(b);
+    //   });
+    qrCodesList.sort((a, b) {
+      int posA = int.parse(
+          a![a.length - charsForChunk - 1]); // Extract the age from string a
+      int posB = int.parse(
+          b![b.length - charsForChunk - 1]); // Extract the age from string b
 
-  //   var decompressedData
-  // }
+      // Compare the ages to determine the sorting order
+      return posA.compareTo(posB);
+    });
+
+    for (final code in qrCodesList) {
+      log(code!);
+    }
+
+    // for (final qrData in qrStringList) {
+    //   // var intData = qrData.split("").map((data) => int.parse(data)).toList();
+    //   var
+    //   qrIntList = qrIntList + intData;
+    // }
+
+    // var decompressedData
+  }
 }

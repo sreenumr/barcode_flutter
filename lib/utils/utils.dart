@@ -80,9 +80,9 @@ Future<List<String>> splitWithCount(
     for (int i = 0; i < output.length; i++) {
       output[i] = output[i] + output.length.toString();
     }
-    for (int i = 0; i < output.length; i++) {
-      log("Value of QR code before generation : ${output[i]}");
-    }
+    // for (int i = 0; i < output.length; i++) {
+    //   log("Value of QR code before generation : ${output[i]}");
+    // }
   } catch (e) {
     print("An error occurred $e");
   }
