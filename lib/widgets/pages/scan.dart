@@ -46,6 +46,7 @@ class ScanPageState extends State<ScanPage> {
                   qrCodeCallback: (code) {
                     // ...;
                     log(code!);
+                    processQr(code);
                   },
                 ),
               )
@@ -70,7 +71,8 @@ class ScanPageState extends State<ScanPage> {
                       children: [
                         Row(
                           children: [
-                            Text("Total Scanned = ${resultCodeSet.length}")
+                            Text(
+                                "Total Scanned = ${resultCodeSet.length}/$totalChunks")
                           ],
                         )
                       ],
@@ -96,11 +98,28 @@ class ScanPageState extends State<ScanPage> {
           totalChunks = int.parse(
               resultCodeSet.first!.substring(resultCodeSet.first!.length - 1));
         }
-        print("Total Chunks ${totalChunks}");
+
         log(scanData.code!);
 
         // totalChunks = resultCodeSet.last.substring(resultCodeSet.last.length - 1);
       });
+    });
+  }
+
+  void processQr(String code) {
+    setState(() {
+      // result = scanData;
+      // result.add(scanData);
+      // result.add(scanData);
+      // if(scanData.code.length)
+      resultCodeSet.add(code);
+      if (resultCodeSet.isNotEmpty) {
+        totalChunks = int.parse(
+            resultCodeSet.first!.substring(resultCodeSet.first!.length - 1));
+      }
+      print("Total Chunks ${totalChunks}");
+
+      // totalChunks = resultCodeSet.last.substring(resultCodeSet.last.length - 1);
     });
   }
 
