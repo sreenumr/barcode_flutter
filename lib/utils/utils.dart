@@ -48,14 +48,14 @@ Future<List<String>> splitWithCount(
 
   // int currentChunkSize = 0;
   // print("Input length = ${input.length}");
-  print("Selected File ${selectedFile.extension}");
+  // print("Selected File ${selectedFile.extension}");
   // print("Splitting $input of length ${input.length}");
   try {
     while (start <= input.length) {
       end = start + chunkSize;
       if (end > input.length) end = input.length;
       if (input.substring(start, end).isNotEmpty) {
-        print("End before ${end}");
+        // print("End before ${end}");
         if (end - 1 - maxCharsForChunkNum - extLength <= 0) {
           //do nothing
           end = end;
@@ -64,7 +64,7 @@ Future<List<String>> splitWithCount(
         } else {
           end = end - 1 - maxCharsForChunkNum - extLength;
         }
-        print("End after ${end}");
+        // print("End after ${end}");
         var string = input.substring(start, end) +
             selectedFile.extension +
             pos.toString();

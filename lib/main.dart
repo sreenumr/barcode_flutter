@@ -74,7 +74,7 @@ class MyAppState extends ChangeNotifier {
       selectedFilePath = result.files.first.path!;
       // print(result.files.first.size);
       // print(result.files.first.path);
-      print("Extension = ${selectedFile.extension}");
+      // print("Extension = ${selectedFile.ext ension}");
       notifyListeners();
     } catch (e) {
       print(e);
@@ -137,7 +137,7 @@ class MyAppState extends ChangeNotifier {
       // final png = svg.to
       // QrData = "Happy Birthday to You";
       int chunkSize = 2953;
-      print(chunkSize);
+      // print(chunkSize);
       splitCodes = await splitWithCount(QrData, chunkSize, selectedFile);
       for (final code in splitCodes) {
         qrCode = QrCode(QrVersions.max, QrErrorCorrectLevel.L)..addData(code);
