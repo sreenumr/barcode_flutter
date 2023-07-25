@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:barcode_app/main.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 // import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 // import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
+import 'package:provider/provider.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key, required this.title});
@@ -18,15 +20,17 @@ class ScanPage extends StatefulWidget {
 
 class ScanPageState extends State<ScanPage> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+
   Set<Barcode> result = {};
-  Set<String?> resultCodeSet = {};
   String barcodeOutput = "";
   QRViewController? controller;
   int totalChunksScanned = 0;
   int totalChunks = 0;
-
+  Set<String?> resultCodeSet = {};
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    resultCodeSet = appState.resultCodeSet;
     return Scaffold(
       body: Column(
         children: <Widget>[

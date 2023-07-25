@@ -56,6 +56,7 @@ class MyAppState extends ChangeNotifier {
   var qrCode;
   List<String> splitCodes = [];
   List<QrCode> codes = [];
+  Set<String?> resultCodeSet = {};
 
   GlobalKey globalKey = GlobalKey();
 
