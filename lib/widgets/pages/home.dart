@@ -1,7 +1,6 @@
 import 'package:barcode_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import './code_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -18,22 +17,15 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(appState.selectedFileName),
-            ElevatedButton(
-                onPressed: () {
-                  appState.pickFile();
-                },
-                child: const Text("Browse")),
             if (appState.selectedFileName.isNotEmpty)
-              (ElevatedButton(
+              Text(appState.selectedFileName,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+            if (appState.selectedFileName.isNotEmpty)
+              (ElevatedButton.icon(
                   onPressed: () {
                     appState.generateQRCode();
                     Navigator.push(
@@ -43,10 +35,22 @@ class _MyHomePageState extends State<MyHomePage> {
                                   title: "Code Page",
                                 )));
                   },
-                  child: const Text("Generate Code"))),
+                  icon: const Icon(Icons.qr_code),
+                  label: const Text(
+                    "Generate Code",
+                  )))
+            else
+              const Text(
+                "Open a file to be converted to QR code",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+          onPressed: () => {appState.pickFile()},
+          icon: const Icon(Icons.file_upload),
+          label: const Text("Open File")),
     );
   }
 }
