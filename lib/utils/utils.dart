@@ -25,6 +25,12 @@ Future<List<int>> readFileAsBytes(String filePath) async {
   return bytes;
 }
 
+void writeFileAsBytes(List<int> data, String filename, String ext,
+    [String path = "/storage/emulated/0/"]) async {
+  final file = File("$path/$filename.$ext");
+  await file.writeAsBytes(data);
+}
+
 Future<bool> requestFilePermission() async {
   PermissionStatus result;
   // In Android we need to request the storage permission,
@@ -43,6 +49,7 @@ Future<List<String>> splitWithCount(
   int pos = 0;
   int maxCharsForChunkNum = 1;
   int extLength = selectedFile.extension.length;
+  int charsForEmptySpace = 1;
   // input = "Happy Birthday to you";
   // chunkSize = 5;
 
@@ -56,17 +63,37 @@ Future<List<String>> splitWithCount(
       if (end > input.length) end = input.length;
       if (input.substring(start, end).isNotEmpty) {
         // print("End before ${end}");
-        if (end - 1 - maxCharsForChunkNum - extLength <= 0) {
+        if (end -
+                1 -
+                maxCharsForChunkNum -
+                extLength -
+                1 -
+                charsForEmptySpace <=
+            0) {
           //do nothing
           end = end;
-        } else if (end - 1 - maxCharsForChunkNum - extLength <= start) {
+        } else if (end -
+                1 -
+                maxCharsForChunkNum -
+                extLength -
+                1 -
+                charsForEmptySpace <=
+            start) {
           end = end;
         } else {
-          end = end - 1 - maxCharsForChunkNum - extLength;
+          end = end -
+              1 -
+              maxCharsForChunkNum -
+              extLength -
+              1 -
+              charsForEmptySpace;
         }
         // print("End after ${end}");
+        var emptySpace = " ";
         var string = input.substring(start, end) +
+            emptySpace +
             selectedFile.extension +
+            selectedFile.extension.length.toString() +
             pos.toString();
         // print(
         // "New String  = ${string + selectedFile.extension + pos.toString()}");
@@ -80,9 +107,9 @@ Future<List<String>> splitWithCount(
     for (int i = 0; i < output.length; i++) {
       output[i] = output[i] + output.length.toString();
     }
-    // for (int i = 0; i < output.length; i++) {
-    //   log("Value of QR code before generation : ${output[i]}");
-    // }
+    for (int i = 0; i < output.length; i++) {
+      log("Value of QR code before generation : ${output[i]}");
+    }
   } catch (e) {
     print("An error occurred $e");
   }

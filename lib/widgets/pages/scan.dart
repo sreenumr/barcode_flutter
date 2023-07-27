@@ -45,8 +45,8 @@ class ScanPageState extends State<ScanPage> {
                 child: QrCamera(
                   qrCodeCallback: (code) {
                     // ...;
-                    log(code!);
-                    processQr(code);
+                    // log(code!);
+                    processQr(code!);
                   },
                 ),
               )

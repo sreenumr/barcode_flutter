@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'dart:developer';
 
 import 'package:barcode_app/utils/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'widgets/pages/home.dart';
 import 'package:provider/provider.dart';
@@ -92,6 +93,18 @@ class MyAppState extends ChangeNotifier {
     // var unicode = utf8.encode(byteData);
     var GZIPcompressedByteData = gzip.encode(byteData);
     var ZLIBcompressedByteData = zlib.encode(byteData);
+    log(ZLIBcompressedByteData.toString());
+    try {
+      var ZLIBdecompressedData = zlib.decode(ZLIBcompressedByteData);
+      listEquals(byteData, ZLIBdecompressedData)
+          // byteData == ZLIBdecompressedData
+          ? print("Compressed = decompressed")
+          : print("Compressed not equal to decompressed");
+      // log(byteData.toString());
+      // log(ZLIBdecompressedData.toString());
+    } catch (e) {
+      print(e);
+    }
 
     var unicode = utf8.encode(binaryData);
     var GZIPcompressedBinaryData = gzip.encode(unicode);
@@ -133,7 +146,7 @@ class MyAppState extends ChangeNotifier {
     try {
       final barcode = Barcode.qrCode(
           typeNumber: 40, errorCorrectLevel: BarcodeQRCorrectionLevel.low);
-      QrData = ZLIBcompressedByteData.join("");
+      QrData = ZLIBcompressedByteData.join(" ");
       // print("Length of QR data = ${QrData.length}");
       // final png = svg.to
       // QrData = "Happy Birthday to You";
@@ -185,29 +198,51 @@ class MyAppState extends ChangeNotifier {
 
   void decodeQRCodes() {
     print("Decoding QR codes");
-    // List<int> qrIntList = [];
-    // //ext pos noofchunks
+    // //ext extlength pos noofchunks
     List<String?> qrCodesList = resultCodeSet.toList();
     var charsForChunk = 1;
-    // qrCodesList.sort((a, b) => {
-    //   // var posA = int.parse(a[a.length - charsForChunk - 1]);
-    //   // var posB = int.parse(a[a.length - charsForChunk - 1]);
-    //   return a.compareTo(b);
-    //   });
-    qrCodesList.sort((a, b) {
-      int posA = int.parse(
-          a![a.length - charsForChunk - 1]); // Extract the age from string a
-      int posB = int.parse(
-          b![b.length - charsForChunk - 1]); // Extract the age from string b
+    var qrMeta = "";
 
-      // Compare the ages to determine the sorting order
+    qrCodesList.sort((a, b) {
+      var meta_a = a!.split(" ").last.trim();
+      var meta_b = b!.split(" ").last.trim();
+      print("META :${meta_a}");
+      int posA = int.parse(meta_a![meta_a.length - charsForChunk - 1]);
+      int posB = int.parse(meta_b![meta_b.length - charsForChunk - 1]);
+
       return posA.compareTo(posB);
     });
 
+    var completeQrData = "";
+    var meta = qrCodesList.first!.split(" ").last.trim();
+    print("META : ${meta}");
+    var extLength = int.parse(meta[meta.length - charsForChunk - 1 - 1]);
     for (final code in qrCodesList) {
-      log(code!);
+      // log(code!.substring(0, code.length - meta.length));
+      // print("Ext length ${extLength}");
+      completeQrData += code!.substring(0, code.length - meta.length).trim();
     }
 
+    // //ext extlength pos noofchunks
+    try {
+      List<int> convertedData = [];
+      // log("Complete QR Data");
+      // log(completeQrData);
+      for (var d in completeQrData.split(" ")) {
+        convertedData.add(int.parse(d));
+      }
+      // log(convertedData.toString());
+      var decodedData = zlib.decode(convertedData);
+      var code = qrCodesList.first;
+      var fileExt = meta.substring(
+        0,
+        meta.length - charsForChunk - 1 - 1,
+      );
+      print("Extenstion ${fileExt}");
+      writeFileAsBytes(decodedData, "sample", fileExt);
+    } catch (e) {
+      log(e.toString());
+    }
     // for (final qrData in qrStringList) {
     //   // var intData = qrData.split("").map((data) => int.parse(data)).toList();
     //   var
