@@ -7,7 +7,7 @@ const double fontLarge = 20;
 
 //Colors
 const MaterialColor themeColorPrimary = Colors.deepPurple;
-const MaterialAccentColor themColorSecondary = Colors.deepPurpleAccent;
+const MaterialAccentColor themeColorSecondary = Colors.deepPurpleAccent;
 
 //Padding
 
