@@ -2,6 +2,7 @@ import 'package:barcode_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './code_page.dart';
+import '../../config/constants.dart' as Constants;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -24,7 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
             if (appState.selectedFileName.isNotEmpty)
               Text(appState.selectedFileName,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: Constants.fontMedium,
                   )),
             if (appState.selectedFileName.isNotEmpty)
               (ElevatedButton.icon(
@@ -45,9 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
               const Text(
                 "Open a file to be converted to QR code",
                 style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.deepPurple),
+                  fontSize: Constants.fontMedium,
+                ),
               ),
           ]
               .map((widget) => Padding(
