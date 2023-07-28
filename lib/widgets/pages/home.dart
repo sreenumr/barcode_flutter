@@ -23,7 +23,9 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             if (appState.selectedFileName.isNotEmpty)
               Text(appState.selectedFileName,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  )),
             if (appState.selectedFileName.isNotEmpty)
               (ElevatedButton.icon(
                   onPressed: () {
@@ -42,15 +44,32 @@ class _MyHomePageState extends State<MyHomePage> {
             else
               const Text(
                 "Open a file to be converted to QR code",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.deepPurple),
               ),
-          ],
+          ]
+              .map((widget) => Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: widget,
+                  ))
+              .toList(),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => {appState.pickFile()},
-          icon: const Icon(Icons.file_upload),
-          label: const Text("Open File")),
+      floatingActionButton:
+          // Row(
+          // children: [
+          // FloatingActionButton.extended(
+          //     onPressed: () => {appState.pickFile()},
+          //     icon: const Icon(Icons.qr_code_scanner),
+          //     label: const Text("Generate Code")),
+          FloatingActionButton.extended(
+              onPressed: () => {appState.pickFile()},
+              icon: const Icon(Icons.file_upload),
+              label: const Text("Open File")),
+      // ],
     );
+    // );
   }
 }

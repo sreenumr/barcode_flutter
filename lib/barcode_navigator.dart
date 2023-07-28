@@ -49,7 +49,26 @@ class BarcodeNavigatorState extends State<BarcodeNavigator> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBar(
+        appBar:
+            // PreferredSize(
+            //     preferredSize: const Size.fromHeight(120),
+            //     child: Container(
+            //       child: const Column(
+            //         children: [
+            //           TabBar(
+            //             tabs: [
+            //               Tab(icon: Icon(Icons.home)),
+            //               Tab(icon: Icon(Icons.qr_code_scanner))
+            //             ],
+            //           ),
+            //         ],
+            //       ),
+            //     )),
+            AppBar(
+          // toolbarHeight: 10, // Set this height
+          title: const Text(
+            "Barcode App",
+          ),
           bottom: const TabBar(tabs: [
             Tab(icon: Icon(Icons.home)),
             Tab(icon: Icon(Icons.qr_code_scanner))
