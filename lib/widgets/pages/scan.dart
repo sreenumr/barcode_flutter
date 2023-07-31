@@ -75,7 +75,9 @@ class ScanPageState extends State<ScanPage> {
                             color: constants.themeColorSecondary),
                       )
                     else
-                      const Text("Scan QR codes")
+                      const Text("Scan QR codes"),
+                    ElevatedButton(
+                        onPressed: appState.reset, child: const Text("Reset"))
                   ],
                 ),
                 if (resultCodeSet.length == totalChunks && (totalChunks != 0))

@@ -26,7 +26,8 @@ class CodePageState extends State<CodePage> {
           child: ListView(
         scrollDirection: Axis.vertical,
         children: [
-          if (appState.isLoading == true) const CircularProgressIndicator(),
+          if (appState.isLoading == true)
+            const Center(child: CircularProgressIndicator()),
           if (appState.renderError)
             Center(
               child: Text(

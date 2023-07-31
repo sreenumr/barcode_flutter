@@ -62,6 +62,7 @@ class MyAppState extends ChangeNotifier {
   var qrRenderErrorMsg = "";
   var qrImage;
   var qrCode;
+  List<int> decompressedData = [];
   List<String> splitCodes = [];
   List<QrCode> codes = [];
   Set<String?> resultCodeSet = {};
@@ -99,7 +100,12 @@ class MyAppState extends ChangeNotifier {
     // var unicode = utf8.encode(byteData);
     var GZIPcompressedByteData = gzip.encode(byteData);
     var ZLIBcompressedByteData = zlib.encode(byteData);
-    log(ZLIBcompressedByteData.toString());
+    // log(ZLIBcompressedByteData.toString());
+    var ZLIBdecompressedData = zlib.decode(ZLIBcompressedByteData);
+    decompressedData = ZLIBdecompressedData;
+    // log("Decompressed Data $ZLIBdecompressedData");
+    // writeFileAsBytes(ZLIBdecompressedData, "test", "png");
+
     try {
       var ZLIBdecompressedData = zlib.decode(ZLIBcompressedByteData);
       listEquals(byteData, ZLIBdecompressedData)
@@ -202,17 +208,24 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
+  void reset() {
+    resultCodeSet.clear();
+  }
+
   void decodeQRCodes() {
     print("Decoding QR codes");
     // //ext extlength pos noofchunks
     List<String?> qrCodesList = resultCodeSet.toList();
+    // for (final s in qrCodesList) {
+    //   log(s!);
+    // }
     var charsForChunk = 1;
     var qrMeta = "";
 
     qrCodesList.sort((a, b) {
       var meta_a = a!.split(" ").last.trim();
       var meta_b = b!.split(" ").last.trim();
-      print("META :${meta_a}");
+      // print("META :${meta_a}");
       int posA = int.parse(meta_a![meta_a.length - charsForChunk - 1]);
       int posB = int.parse(meta_b![meta_b.length - charsForChunk - 1]);
 
@@ -226,17 +239,25 @@ class MyAppState extends ChangeNotifier {
     for (final code in qrCodesList) {
       // log(code!.substring(0, code.length - meta.length));
       // print("Ext length ${extLength}");
-      completeQrData += code!.substring(0, code.length - meta.length).trim();
+      completeQrData += code!.substring(0, code.length - meta.length);
+      // log(code.substring(0, code.length - meta.length).trim());
     }
 
     // //ext extlength pos noofchunks
+    List<int> convertedData = [];
+    String d = "";
     try {
-      List<int> convertedData = [];
       // log("Complete QR Data");
-      // log(completeQrData);
-      for (var d in completeQrData.split(" ")) {
+      // log("${completeQrData.trim().split(" ")}");
+      for (d in completeQrData.trim().split(" ")) {
+        // print(d);
         convertedData.add(int.parse(d));
       }
+    } catch (e) {
+      log("An error occured while parsing string $e");
+      print("Found char $d");
+    }
+    try {
       // log(convertedData.toString());
       var decodedData = zlib.decode(convertedData);
       var code = qrCodesList.first;
@@ -244,10 +265,12 @@ class MyAppState extends ChangeNotifier {
         0,
         meta.length - charsForChunk - 1 - 1,
       );
-      print("Extenstion ${fileExt}");
+      // print("Extenstion ${fileExt}");
+      // log("Decoded Data $decodedData");
+
       writeFileAsBytes(decodedData, "sample", fileExt);
     } catch (e) {
-      log(e.toString());
+      log("An error occurred during decompression ${e.toString()}");
     }
     // for (final qrData in qrStringList) {
     //   // var intData = qrData.split("").map((data) => int.parse(data)).toList();

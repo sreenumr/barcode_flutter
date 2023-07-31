@@ -44,74 +44,52 @@ Future<bool> requestFilePermission() async {
 Future<List<String>> splitWithCount(
     String input, int chunkSize, dynamic selectedFile) async {
   List<String> output = [];
-  int start = 0;
-  int end = 0;
+
   int pos = 0;
   int maxCharsForChunkNum = 1;
   int extLength = selectedFile.extension.length;
   int charsForEmptySpace = 1;
-  // input = "Happy Birthday to you";
-  // chunkSize = 5;
+  int charsForCodePos = 1;
+  int charsForExtLength = 1;
 
-  // int currentChunkSize = 0;
-  // print("Input length = ${input.length}");
-  // print("Selected File ${selectedFile.extension}");
-  // print("Splitting $input of length ${input.length}");
-  try {
-    while (start <= input.length) {
-      end = start + chunkSize;
-      if (end > input.length) end = input.length;
-      if (input.substring(start, end).isNotEmpty) {
-        // print("End before ${end}");
-        if (end -
-                1 -
-                maxCharsForChunkNum -
-                extLength -
-                1 -
-                charsForEmptySpace <=
-            0) {
-          //do nothing
-          end = end;
-        } else if (end -
-                1 -
-                maxCharsForChunkNum -
-                extLength -
-                1 -
-                charsForEmptySpace <=
-            start) {
-          end = end;
-        } else {
-          end = end -
-              1 -
-              maxCharsForChunkNum -
-              extLength -
-              1 -
-              charsForEmptySpace;
-        }
-        // print("End after ${end}");
-        var emptySpace = " ";
-        var string = input.substring(start, end) +
-            emptySpace +
-            selectedFile.extension +
-            selectedFile.extension.length.toString() +
-            pos.toString();
-        // print(
-        // "New String  = ${string + selectedFile.extension + pos.toString()}");
-        pos++;
-        output.add(string);
-      }
-      // print("Creating chunk ${input.substring(start, end)}");
-      start += chunkSize;
-    }
+  List<String> sList = input.split(" ");
+  String chunk = "";
+  String temp = "";
+  List<String> chunkList = [];
+  int tempChunkSize = chunkSize -
+      charsForExtLength -
+      charsForCodePos -
+      charsForEmptySpace -
+      maxCharsForChunkNum -
+      extLength;
 
-    for (int i = 0; i < output.length; i++) {
-      output[i] = output[i] + output.length.toString();
+  if (tempChunkSize <= 0) {
+    tempChunkSize = chunkSize;
+  }
+  for (int i = 0; i < sList.length; i++) {
+    temp += "${sList[i]}${" "}";
+    if (temp.length <= tempChunkSize) {
+      chunk = temp;
+    } else {
+      // log("${chunk.trim()}");
+      chunkList.add(chunk.trim());
+      chunk = "";
+      temp = "${sList[i]}${" "}";
     }
-    for (int i = 0; i < output.length; i++) {
-      log("Value of QR code before generation : ${output[i]}");
+    if (i == sList.length - 1) {
+      // log("Last element reached");
+      chunk = temp;
+      // log("${chunk.trim()}");
+      chunkList.add(chunk.trim());
     }
-  } catch (e) {
-    print("An error occurred $e");
+  }
+
+  for (chunk in chunkList) {
+    var newChunk =
+        "$chunk ${selectedFile.extension}${selectedFile.extension.length.toString()}${pos.toString()}${chunkList.length.toString()}";
+    pos++;
+    output.add(newChunk);
+    // log("$newChunk");
   }
 
   return output;
