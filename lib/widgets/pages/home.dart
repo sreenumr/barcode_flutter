@@ -25,13 +25,13 @@ class _MyHomePageState extends State<MyHomePage> {
               if (appState.selectedFileName.isNotEmpty)
                 Text(appState.selectedFileName,
                     style: const TextStyle(
-                      fontSize: Constants.fontMedium,
-                    )),
-              const Text(
-                "Open a file to be converted to QR code",
-                style: TextStyle(
-                    fontSize: Constants.fontMedium, color: Colors.black),
-              ),
+                        fontSize: Constants.fontMedium, color: Colors.black))
+              else
+                const Text(
+                  "Open a file to be converted to QR code",
+                  style: TextStyle(
+                      fontSize: Constants.fontMedium, color: Colors.black),
+                ),
               SizedBox(
                 width: 150,
                 height: 50,

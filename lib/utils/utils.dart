@@ -48,6 +48,7 @@ Future<List<String>> splitWithCount(
   int pos = 0;
   int maxCharsForChunkNum = 1;
   int extLength = selectedFile.extension.length;
+  // log("Selected File extension length = $extLength");
   int charsForEmptySpace = 1;
   int charsForCodePos = 1;
   int charsForExtLength = 1;
@@ -71,15 +72,12 @@ Future<List<String>> splitWithCount(
     if (temp.length <= tempChunkSize) {
       chunk = temp;
     } else {
-      // log("${chunk.trim()}");
       chunkList.add(chunk.trim());
       chunk = "";
       temp = "${sList[i]}${" "}";
     }
     if (i == sList.length - 1) {
-      // log("Last element reached");
       chunk = temp;
-      // log("${chunk.trim()}");
       chunkList.add(chunk.trim());
     }
   }

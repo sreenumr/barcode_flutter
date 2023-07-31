@@ -17,52 +17,70 @@ class CodePageState extends State<CodePage> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
+    final pageView = PageView(
+      controller: PageController(initialPage: 1),
+      children: [],
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-          child: ListView(
-        scrollDirection: Axis.vertical,
-        children: [
-          if (appState.isLoading == true)
-            const Center(child: CircularProgressIndicator()),
-          if (appState.renderError)
-            Center(
-              child: Text(
-                appState.qrRenderErrorMsg,
-                textAlign: TextAlign.center,
-              ),
-            )
-          else
-            RepaintBoundary(
-                key: appState.globalKey,
-                child: Container(
-                  color: Colors.white,
-                  child: GridView.count(
-                    crossAxisCount: 1,
-                    shrinkWrap: true,
-                    primary: false,
-                    children: <Widget>[
-                      for (final code in appState.splitCodes) ...[
-                        Center(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
+        ),
+        body: Center(
+            child: Column(
+          children: [
+            Expanded(
+              flex: 8,
+              child: RepaintBoundary(
+                  key: appState.globalKey,
+                  child: PageView.builder(
+                      itemCount: appState.splitCodes.length,
+                      controller: PageController(viewportFraction: 1),
+                      onPageChanged: (int num) => {changeIndex(num)},
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return Center(
                             child: QrImageView(
-                                padding: EdgeInsets.all(10.0),
-                                data: code,
+                                padding: const EdgeInsets.all(10.0),
+                                data: appState.splitCodes[index],
                                 version: QrVersions.auto,
                                 errorCorrectionLevel: QrErrorCorrectLevel.L,
-                                size: 300))
-                      ]
-                    ],
+                                size: 300));
+                      })),
+            ),
+            Expanded(
+              flex: 1,
+              child: Wrap(children: [
+                for (int i = 0; i < appState.splitCodes.length; i++)
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: SizedBox(
+                      height: 10,
+                      width: 10,
+                      child: ElevatedButton(
+                        onPressed: () => {},
+                        child: const Text(" "),
+                      ),
+                    ),
                   ),
-                )),
-          if (appState.renderError == false)
-            ElevatedButton(
-                onPressed: appState.captureAndSharePng,
-                child: const Text("Save QR Code"))
-        ],
-      )),
-    );
+              ]),
+            ),
+            if (appState.renderError == false)
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: ElevatedButton(
+                      onPressed: appState.captureAndSharePng,
+                      child: const Text("Save QR Code")),
+                ),
+              ),
+          ],
+        )));
+  }
+
+  void changeIndex(int num) {
+    print("Page Number $num");
   }
 }
