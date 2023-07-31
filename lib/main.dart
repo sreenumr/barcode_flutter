@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -9,12 +8,10 @@ import 'package:barcode_app/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'widgets/pages/home.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/rendering.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:barcode/barcode.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'barcode_navigator.dart';
@@ -81,9 +78,7 @@ class MyAppState extends ChangeNotifier {
       selectedFile = result.files.first;
       selectedFileName = result.files.first.name;
       selectedFilePath = result.files.first.path!;
-      // print(result.files.first.size);
-      // print(result.files.first.path);
-      // print("Extension = ${selectedFile.ext ension}");
+
       notifyListeners();
     } catch (e) {
       print(e);
@@ -159,9 +154,6 @@ class MyAppState extends ChangeNotifier {
       final barcode = Barcode.qrCode(
           typeNumber: 40, errorCorrectLevel: BarcodeQRCorrectionLevel.low);
       QrData = ZLIBcompressedByteData.join(" ");
-      // print("Length of QR data = ${QrData.length}");
-      // final png = svg.to
-      // QrData = "Happy Birthday to You";
       int chunkSize = 2953;
       // print(chunkSize);
       splitCodes = await splitWithCount(QrData, chunkSize, selectedFile);
@@ -216,68 +208,44 @@ class MyAppState extends ChangeNotifier {
     print("Decoding QR codes");
     // //ext extlength pos noofchunks
     List<String?> qrCodesList = resultCodeSet.toList();
-    // for (final s in qrCodesList) {
-    //   log(s!);
-    // }
+
     var charsForChunk = 1;
-    var qrMeta = "";
 
     qrCodesList.sort((a, b) {
       var meta_a = a!.split(" ").last.trim();
       var meta_b = b!.split(" ").last.trim();
       // print("META :${meta_a}");
-      int posA = int.parse(meta_a![meta_a.length - charsForChunk - 1]);
-      int posB = int.parse(meta_b![meta_b.length - charsForChunk - 1]);
+      int posA = int.parse(meta_a[meta_a.length - charsForChunk - 1]);
+      int posB = int.parse(meta_b[meta_b.length - charsForChunk - 1]);
 
       return posA.compareTo(posB);
     });
 
-    var completeQrData = "";
+    String completeQrData = "";
     var meta = qrCodesList.first!.split(" ").last.trim();
-    print("META : ${meta}");
-    var extLength = int.parse(meta[meta.length - charsForChunk - 1 - 1]);
     for (final code in qrCodesList) {
-      // log(code!.substring(0, code.length - meta.length));
-      // print("Ext length ${extLength}");
       completeQrData += code!.substring(0, code.length - meta.length);
-      // log(code.substring(0, code.length - meta.length).trim());
     }
 
     // //ext extlength pos noofchunks
     List<int> convertedData = [];
     String d = "";
     try {
-      // log("Complete QR Data");
-      // log("${completeQrData.trim().split(" ")}");
       for (d in completeQrData.trim().split(" ")) {
-        // print(d);
         convertedData.add(int.parse(d));
       }
     } catch (e) {
       log("An error occured while parsing string $e");
-      print("Found char $d");
     }
     try {
-      // log(convertedData.toString());
       var decodedData = zlib.decode(convertedData);
-      var code = qrCodesList.first;
       var fileExt = meta.substring(
         0,
         meta.length - charsForChunk - 1 - 1,
       );
-      // print("Extenstion ${fileExt}");
-      // log("Decoded Data $decodedData");
-
       writeFileAsBytes(decodedData, "sample", fileExt);
     } catch (e) {
       log("An error occurred during decompression ${e.toString()}");
     }
-    // for (final qrData in qrStringList) {
-    //   // var intData = qrData.split("").map((data) => int.parse(data)).toList();
-    //   var
-    //   qrIntList = qrIntList + intData;
-    // }
-
-    // var decompressedData
   }
 }

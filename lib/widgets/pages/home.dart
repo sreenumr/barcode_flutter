@@ -18,58 +18,54 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            if (appState.selectedFileName.isNotEmpty)
-              Text(appState.selectedFileName,
-                  style: const TextStyle(
-                    fontSize: Constants.fontMedium,
-                  )),
-            if (appState.selectedFileName.isNotEmpty)
-              (ElevatedButton.icon(
-                  onPressed: () {
-                    appState.generateQRCode();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CodePage(
-                                  title: "Code Page",
-                                )));
-                  },
-                  icon: const Icon(Icons.qr_code),
-                  label: const Text(
-                    "Generate Code",
-                  )))
-            else
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              if (appState.selectedFileName.isNotEmpty)
+                Text(appState.selectedFileName,
+                    style: const TextStyle(
+                      fontSize: Constants.fontMedium,
+                    )),
               const Text(
                 "Open a file to be converted to QR code",
                 style: TextStyle(
-                  fontSize: Constants.fontMedium,
+                    fontSize: Constants.fontMedium, color: Colors.black),
+              ),
+              SizedBox(
+                width: 150,
+                height: 50,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    appState.pickFile();
+                  },
+                  icon: const Icon(Icons.file_open),
+                  label: const Text(
+                    "Open File",
+                  ),
                 ),
               ),
-          ]
-              .map((widget) => Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: widget,
-                  ))
-              .toList(),
+            ]
+                .map((widget) => Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: widget,
+                    ))
+                .toList(),
+          ),
         ),
-      ),
-      floatingActionButton:
-          // Row(
-          // children: [
-          // FloatingActionButton.extended(
-          //     onPressed: () => {appState.pickFile()},
-          //     icon: const Icon(Icons.qr_code_scanner),
-          //     label: const Text("Generate Code")),
-          FloatingActionButton.extended(
-              onPressed: () => {appState.pickFile()},
-              icon: const Icon(Icons.file_upload),
-              label: const Text("Open File")),
-      // ],
-    );
-    // );
+        floatingActionButton: appState.selectedFileName.isNotEmpty
+            ? FloatingActionButton.extended(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CodePage(
+                                title: "Code Page",
+                              )));
+                  appState.generateQRCode();
+                },
+                icon: const Icon(Icons.qr_code),
+                label: const Text("Generate QR code"))
+            : null);
   }
 }
