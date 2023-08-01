@@ -12,75 +12,86 @@ class CodePage extends StatefulWidget {
   State<CodePage> createState() => CodePageState();
 }
 
-class CodePageState extends State<CodePage> {
+class CodePageState extends State<CodePage> with TickerProviderStateMixin {
+  TabController? tabController;
+  late AnimationController animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2))
+          ..addListener(() {
+            setState(() {});
+          });
+    animationController.repeat();
+  }
+
+  @override
+  void dispose() {
+    tabController?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-
-    final pageView = PageView(
-      controller: PageController(initialPage: 1),
-      children: [],
+    tabController = TabController(
+      length: appState.splitCodes.isNotEmpty ? appState.splitCodes.length : 1,
+      vsync: this,
     );
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(widget.title),
         ),
         body: Center(
-            child: Column(
-          children: [
-            Expanded(
-              flex: 8,
-              child: RepaintBoundary(
-                  key: appState.globalKey,
-                  child: PageView.builder(
-                      itemCount: appState.splitCodes.length,
-                      controller: PageController(viewportFraction: 1),
-                      onPageChanged: (int num) => {changeIndex(num)},
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return Center(
-                            child: QrImageView(
-                                padding: const EdgeInsets.all(10.0),
-                                data: appState.splitCodes[index],
-                                version: QrVersions.auto,
-                                errorCorrectionLevel: QrErrorCorrectLevel.L,
-                                size: 300));
-                      })),
-            ),
-            Expanded(
-              flex: 1,
-              child: Wrap(children: [
-                for (int i = 0; i < appState.splitCodes.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: SizedBox(
-                      height: 10,
-                      width: 10,
-                      child: ElevatedButton(
-                        onPressed: () => {},
-                        child: const Text(" "),
+          child: appState.splitCodes.isNotEmpty
+              ? Column(
+                  children: [
+                    Expanded(
+                        flex: 8,
+                        child: RepaintBoundary(
+                            key: appState.globalKey,
+                            child: PageView.builder(
+                                itemCount: appState.splitCodes.length,
+                                controller: PageController(viewportFraction: 1),
+                                onPageChanged: (int num) =>
+                                    {tabController?.index = num},
+                                scrollDirection: Axis.horizontal,
+                                // i
+                                itemBuilder: (context, index) {
+                                  return Center(
+                                      child: QrImageView(
+                                          padding: const EdgeInsets.all(10.0),
+                                          data: appState.splitCodes[index],
+                                          version: QrVersions.auto,
+                                          errorCorrectionLevel:
+                                              QrErrorCorrectLevel.L,
+                                          size: 300));
+                                }))),
+                    if (appState.splitCodes.isNotEmpty)
+                      TabPageSelector(controller: tabController),
+                    // if (appState.renderError == false)
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: ElevatedButton(
+                            onPressed: appState.captureAndSharePng,
+                            child: const Text("Save QR Code")),
                       ),
                     ),
-                  ),
-              ]),
-            ),
-            if (appState.renderError == false)
-              Expanded(
-                flex: 1,
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: ElevatedButton(
-                      onPressed: appState.captureAndSharePng,
-                      child: const Text("Save QR Code")),
-                ),
-              ),
-          ],
-        )));
-  }
-
-  void changeIndex(int num) {
-    print("Page Number $num");
+                  ],
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(
+                    value: animationController.value,
+                    backgroundColor: Colors.white,
+                    valueColor: animationController.drive(
+                        ColorTween(begin: Colors.blueAccent, end: Colors.red)),
+                  )),
+        ));
   }
 }
