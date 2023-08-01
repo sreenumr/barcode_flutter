@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:barcode_app/main.dart';
 import 'package:provider/provider.dart';
+import 'package:page_view_indicators/page_view_indicators.dart';
 
 class CodePage extends StatefulWidget {
   const CodePage({super.key, required this.title});
@@ -13,33 +16,31 @@ class CodePage extends StatefulWidget {
 }
 
 class CodePageState extends State<CodePage> with TickerProviderStateMixin {
-  TabController? tabController;
+  late TabController tabController;
   late AnimationController animationController;
 
   @override
   void initState() {
     super.initState();
-    animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2))
-          ..addListener(() {
-            setState(() {});
-          });
+    AnimationController(vsync: this, duration: const Duration(seconds: 2))
+        .addListener(() {
+      setState(() {});
+    });
     animationController.repeat();
   }
 
   @override
   void dispose() {
-    tabController?.dispose();
+    tabController.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
+  int selectedIndex = 0;
+  final currentPageNotifier = ValueNotifier<int>(0);
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    tabController = TabController(
-      length: appState.splitCodes.isNotEmpty ? appState.splitCodes.length : 1,
-      vsync: this,
-    );
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -50,14 +51,18 @@ class CodePageState extends State<CodePage> with TickerProviderStateMixin {
               ? Column(
                   children: [
                     Expanded(
-                        flex: 8,
+                        flex: 6,
                         child: RepaintBoundary(
                             key: appState.globalKey,
                             child: PageView.builder(
                                 itemCount: appState.splitCodes.length,
                                 controller: PageController(viewportFraction: 1),
-                                onPageChanged: (int num) =>
-                                    {tabController?.index = num},
+                                onPageChanged: (int num) {
+                                  log("Page number : $num");
+                                  setState(() {
+                                    currentPageNotifier.value = num;
+                                  });
+                                },
                                 scrollDirection: Axis.horizontal,
                                 // i
                                 itemBuilder: (context, index) {
@@ -70,8 +75,18 @@ class CodePageState extends State<CodePage> with TickerProviderStateMixin {
                                               QrErrorCorrectLevel.L,
                                           size: 300));
                                 }))),
-                    if (appState.splitCodes.isNotEmpty)
-                      TabPageSelector(controller: tabController),
+                    Positioned(
+                      left: 0.0,
+                      right: 0.0,
+                      bottom: 0.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CirclePageIndicator(
+                          itemCount: appState.splitCodes.length,
+                          currentPageNotifier: currentPageNotifier,
+                        ),
+                      ),
+                    ),
                     // if (appState.renderError == false)
                     Expanded(
                       flex: 1,

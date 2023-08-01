@@ -4,23 +4,17 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:developer';
 
 Future<String> readFileAsBinary(String filePath) async {
-  // print("Reading bytes...");
   final file = File(filePath);
   final bytes = await file.readAsBytes();
   final binaryString =
       bytes.map((byte) => byte.toRadixString(2).padLeft(8, '0')).join();
-  // print(binaryString);
-  // print("Reading bytes done");
 
   return binaryString;
 }
 
 Future<List<int>> readFileAsBytes(String filePath) async {
-  // print("Reading bytes...");
   final file = File(filePath);
   final bytes = await file.readAsBytes();
-  // print(binaryString);
-  // print("Reading bytes done");
 
   return bytes;
 }
@@ -48,7 +42,6 @@ Future<List<String>> splitWithCount(
   int pos = 0;
   int maxCharsForChunkNum = 1;
   int extLength = selectedFile.extension.length;
-  // log("Selected File extension length = $extLength");
   int charsForEmptySpace = 1;
   int charsForCodePos = 1;
   int charsForExtLength = 1;
