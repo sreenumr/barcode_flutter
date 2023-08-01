@@ -16,22 +16,21 @@ class CodePage extends StatefulWidget {
 }
 
 class CodePageState extends State<CodePage> with TickerProviderStateMixin {
-  late TabController tabController;
   late AnimationController animationController;
 
   @override
   void initState() {
     super.initState();
-    AnimationController(vsync: this, duration: const Duration(seconds: 2))
-        .addListener(() {
-      setState(() {});
-    });
+    animationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2))
+          ..addListener(() {
+            setState(() {});
+          });
     animationController.repeat();
   }
 
   @override
   void dispose() {
-    tabController.dispose();
     animationController.dispose();
     super.dispose();
   }
@@ -56,7 +55,9 @@ class CodePageState extends State<CodePage> with TickerProviderStateMixin {
                             key: appState.globalKey,
                             child: PageView.builder(
                                 itemCount: appState.splitCodes.length,
-                                controller: PageController(viewportFraction: 1),
+                                controller: PageController(
+                                  viewportFraction: 1,
+                                ),
                                 onPageChanged: (int num) {
                                   log("Page number : $num");
                                   setState(() {
@@ -75,10 +76,8 @@ class CodePageState extends State<CodePage> with TickerProviderStateMixin {
                                               QrErrorCorrectLevel.L,
                                           size: 300));
                                 }))),
-                    Positioned(
-                      left: 0.0,
-                      right: 0.0,
-                      bottom: 0.0,
+                    Expanded(
+                      flex: 2,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: CirclePageIndicator(
