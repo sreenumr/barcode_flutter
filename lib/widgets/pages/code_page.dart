@@ -27,7 +27,6 @@ class CodePageState extends State<CodePage> with TickerProviderStateMixin {
     viewportFraction: 1,
   );
   final GlobalKey globalKey = GlobalKey();
-
   @override
   void initState() {
     super.initState();
@@ -97,13 +96,60 @@ class CodePageState extends State<CodePage> with TickerProviderStateMixin {
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: ElevatedButton(
-                            onPressed: () {
-                              appState.captureAndSharePng();
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text('QR code saved'),
-                              ));
-                            },
+                            onPressed: () => showDialog<String>(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    content: const Text('Save As'),
+                                    actions: <Widget>[
+                                      Column(
+                                        children: [
+                                          TextField(
+                                              onChanged: (text) {
+                                                log("Text changed");
+                                                appState.saveAsFileName = text;
+                                              },
+                                              decoration: const InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                labelText: 'FileName',
+                                              )),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, 'Cancel');
+                                              appState.saveAsFileName = "";
+                                            },
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              if (appState
+                                                  .saveAsFileName.isNotEmpty) {
+                                                appState.captureAndSharePng();
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                        const SnackBar(
+                                                  content:
+                                                      Text('QR code saved'),
+                                                ));
+                                                Navigator.pop(context, 'OK');
+                                              }
+                                            },
+                                            child: Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                )
+                            // onPressed: () {
+
+                            // }
+                            ,
                             child: const Text("Save QR Code")),
                       ),
                     ),

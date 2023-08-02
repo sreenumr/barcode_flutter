@@ -57,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               if (appState.isLoading)
-                Center(
+                const Center(
                   child: SizedBox(
                     width: 40.0,
                     height: 40.0,
@@ -77,7 +77,6 @@ class _MyHomePageState extends State<MyHomePage> {
         floatingActionButton: appState.selectedFileName.isNotEmpty
             ? FloatingActionButton.extended(
                 onPressed: () async {
-                  // _onButtonPressed
                   await appState.generateQRCode();
                   if (appState.splitCodes.length > 6) {
                     log("Print Error");
@@ -87,22 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
                             const CodePage(title: "Code Page")));
-                    // Navigator.of(context).push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => const CodePage(
-                    //               title: "Code Page",
-                    //             )));
                   }
-                }
-
-                // } else {
-                //   appState.renderError = true;
-                //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                //     content: Text('QR Code generation Failed'),
-                //   ));
-                // }
-                ,
+                },
                 icon: const Icon(Icons.qr_code),
                 label: const Text("Generate QR code"))
             : null);

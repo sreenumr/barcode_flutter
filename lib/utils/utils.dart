@@ -21,6 +21,7 @@ Future<List<int>> readFileAsBytes(String filePath) async {
 
 void writeFileAsBytes(List<int> data, String filename, String ext,
     [String path = "/storage/emulated/0/"]) async {
+  log("Filename : $filename");
   final file = File("$path/$filename.$ext");
   await file.writeAsBytes(data);
 }

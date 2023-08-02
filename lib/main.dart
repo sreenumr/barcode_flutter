@@ -58,6 +58,7 @@ class MyAppState extends ChangeNotifier {
   var qrRenderErrorMsg = "";
   var qrImage;
   var qrCode;
+  String saveAsFileName = "";
   List<int> decompressedData = [];
   List<String> splitCodes = [];
   List<QrCode> codes = [];
@@ -198,7 +199,7 @@ class MyAppState extends ChangeNotifier {
       Uint8List pngBytes = byteData!.buffer.asUint8List();
 
       final file =
-          await File('/storage/emulated/0/flutter_qr_image.png').create();
+          await File('/storage/emulated/0/$saveAsFileName.png').create();
       await file.writeAsBytes(pngBytes);
 
       // await Share.file(_dataString, '$_dataString.png', pngBytes, 'image/png');
@@ -250,7 +251,7 @@ class MyAppState extends ChangeNotifier {
         0,
         meta.length - charsForChunk - 1 - 1,
       );
-      writeFileAsBytes(decodedData, "sample", fileExt);
+      writeFileAsBytes(decodedData, saveAsFileName, fileExt);
     } catch (e) {
       log("An error occurred during decompression ${e.toString()}");
     }
