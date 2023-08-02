@@ -97,21 +97,31 @@ class CodePageState extends State<CodePage> with TickerProviderStateMixin {
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: ElevatedButton(
-                            onPressed: () => showDialog<String>(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (BuildContext context) => FileDialog(
-                                      onOk: () {
-                                        if (appState
-                                            .saveAsFileName.isNotEmpty) {
-                                          appState.captureAndSharePng();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(const SnackBar(
-                                            content: Text('QR code saved'),
-                                          ));
-                                        }
-                                      },
-                                    )),
+                            onPressed: () {
+                              if (appState.saveAsFileName.isNotEmpty) {
+                                appState.captureAndSharePng();
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text('QR code saved'),
+                                ));
+                              }
+                            }
+                            // showDialog<String>(
+                            //     barrierDismissible: false,
+                            //     context: context,
+                            //     builder: (BuildContext context) => FileDialog(
+                            //           onOk: () {
+                            //             if (appState
+                            //                 .saveAsFileName.isNotEmpty) {
+                            //               appState.captureAndSharePng();
+                            //               ScaffoldMessenger.of(context)
+                            //                   .showSnackBar(const SnackBar(
+                            //                 content: Text('QR code saved'),
+                            //               ));
+                            //             }
+                            //           },
+                            //         ))
+                            ,
                             child: const Text("Save QR Code")),
                       ),
                     ),

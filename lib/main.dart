@@ -58,7 +58,7 @@ class MyAppState extends ChangeNotifier {
   var qrRenderErrorMsg = "";
   var qrImage;
   var qrCode;
-  String saveAsFileName = "";
+  String saveAsFileName = "DefaultFileName";
   List<int> decompressedData = [];
   List<String> splitCodes = [];
   List<QrCode> codes = [];
