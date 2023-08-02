@@ -42,7 +42,7 @@ class ScanPageState extends State<ScanPage> {
                   child: Stack(
                 children: [
                   QrCamera(
-                    fit: BoxFit.fill,
+                    fit: BoxFit.contain,
                     notStartedBuilder: (context) =>
                         const LinearProgressIndicator(),
                     qrCodeCallback: (code) {
@@ -53,11 +53,15 @@ class ScanPageState extends State<ScanPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(50),
-                    child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(width: 5, color: Colors.white),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)))),
+                    child: Center(
+                      child: Container(
+                          height: 300,
+                          width: 300,
+                          decoration: BoxDecoration(
+                              border: Border.all(width: 5, color: Colors.white),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)))),
+                    ),
                   ),
                 ],
               ))),
