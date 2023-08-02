@@ -186,7 +186,7 @@ class MyAppState extends ChangeNotifier {
     try {
       RenderRepaintBoundary? boundary = globalKey.currentContext!
           .findRenderObject() as RenderRepaintBoundary?;
-      var image = await boundary!.toImage();
+      var image = await boundary!.toImage(pixelRatio: 2);
       ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData!.buffer.asUint8List();
 
