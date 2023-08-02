@@ -35,8 +35,7 @@ Future<bool> requestFilePermission() async {
   return false;
 }
 
-Future<List<String>> splitWithCount(
-    String input, int chunkSize, dynamic selectedFile) async {
+List<String> splitWithCount(String input, int chunkSize, dynamic selectedFile) {
   List<String> output = [];
 
   int pos = 0;

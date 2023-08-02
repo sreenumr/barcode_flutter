@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:barcode_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,14 +16,23 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+
     return Scaffold(
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              if (appState.renderError)
+                const Text(
+                  "QR Code generation failed. QR code limit reached",
+                  style: TextStyle(
+                      fontSize: Constants.fontMedium, color: Colors.redAccent),
+                ),
               if (appState.selectedFileName.isNotEmpty)
                 Text(appState.selectedFileName,
                     style: const TextStyle(
@@ -45,6 +56,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
+              if (appState.isLoading)
+                Center(
+                  child: SizedBox(
+                    width: 40.0,
+                    height: 40.0,
+                    child: CircularProgressIndicator(
+                        backgroundColor: Colors.black,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.red)),
+                  ),
+                )
             ]
                 .map((widget) => Padding(
                       padding: const EdgeInsets.all(20),
@@ -55,15 +76,33 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         floatingActionButton: appState.selectedFileName.isNotEmpty
             ? FloatingActionButton.extended(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const CodePage(
-                                title: "Code Page",
-                              )));
-                  appState.generateQRCode();
-                },
+                onPressed: () async {
+                  // _onButtonPressed
+                  await appState.generateQRCode();
+                  if (appState.splitCodes.length > 6) {
+                    log("Print Error");
+                  } else {
+                    log("No Error");
+                    if (!mounted) return;
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            const CodePage(title: "Code Page")));
+                    // Navigator.of(context).push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => const CodePage(
+                    //               title: "Code Page",
+                    //             )));
+                  }
+                }
+
+                // } else {
+                //   appState.renderError = true;
+                //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                //     content: Text('QR Code generation Failed'),
+                //   ));
+                // }
+                ,
                 icon: const Icon(Icons.qr_code),
                 label: const Text("Generate QR code"))
             : null);

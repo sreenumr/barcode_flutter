@@ -56,7 +56,7 @@ class CodePageState extends State<CodePage> with TickerProviderStateMixin {
           title: Text(widget.title),
         ),
         body: Center(
-          child: appState.splitCodes.isNotEmpty
+          child: !appState.isLoading
               ? Column(
                   children: [
                     Expanded(
@@ -67,64 +67,31 @@ class CodePageState extends State<CodePage> with TickerProviderStateMixin {
                             padding: const EdgeInsets.all(1.0),
                             child: Container(
                               color: Colors.white,
-                              child: GridView.count(
-                                crossAxisCount: 2,
+                              child: GridView.builder(
+                                itemCount: appState.splitCodes.length,
                                 shrinkWrap: true,
                                 primary: false,
                                 scrollDirection: Axis.vertical,
-                                children: <Widget>[
-                                  for (final code in appState.splitCodes) ...[
-                                    Center(
-                                        child: QrImageView(
-                                            padding: const EdgeInsets.all(10.0),
-                                            data: code,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2),
+                                itemBuilder: (context, index) => Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child:
+                                        // Image.asset('assets/images/test.jpg'),
+                                        QrImageView(
+                                            data: appState.splitCodes[index],
                                             version: QrVersions.auto,
                                             errorCorrectionLevel:
                                                 QrErrorCorrectLevel.L,
-                                            size: 300))
-                                  ]
-                                ],
+                                            size: 300),
+                                  ),
+                                ),
                               ),
                             ),
                           )),
-                      // RepaintBoundary(
-                      //     key: appState.globalKey,
-                      //     child: Container(
-                      //       color: Colors.white,
-                      //       child: PageView.builder(
-                      //           itemCount: appState.splitCodes.length,
-                      //           controller: pageController,
-                      //           onPageChanged: (int num) {
-                      //             log("Page number : $num");
-                      //             setState(() {
-                      //               currentPageNotifier.value = num;
-                      //             });
-                      //           },
-                      //           scrollDirection: Axis.horizontal,
-                      //           // i
-                      //           itemBuilder: (context, index) {
-                      //             return Center(
-                      //                 child: QrImageView(
-                      //                     padding: const EdgeInsets.all(10.0),
-                      //                     data: appState.splitCodes[index],
-                      //                     version: QrVersions.auto,
-                      //                     errorCorrectionLevel:
-                      //                         QrErrorCorrectLevel.L,
-                      //                     size: 300));
-                      //           }),
-                      //     ))
                     ),
-                    // Expanded(
-                    //   flex: 2,
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.all(8.0),
-                    //     child: CirclePageIndicator(
-                    //       itemCount: appState.splitCodes.length,
-                    //       currentPageNotifier: currentPageNotifier,
-                    //     ),
-                    //   ),
-                    // ),
-                    // if (appState.renderError == false)
                     Expanded(
                       flex: 1,
                       child: Padding(

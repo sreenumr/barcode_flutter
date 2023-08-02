@@ -15,7 +15,6 @@ import 'package:flutter/rendering.dart';
 import 'package:barcode/barcode.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'barcode_navigator.dart';
-import 'package:qr/qr.dart';
 
 void main() {
   runApp(const MyApp());
@@ -85,9 +84,9 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
-  void generateQRCode() async {
+  Future<void> generateQRCode() async {
     isLoading = true;
-
+    renderError = false;
     var binaryData = await readFileAsBinary(selectedFilePath);
     // var selectedFileExt =
     var byteData = await readFileAsBytes(selectedFilePath);
@@ -156,12 +155,20 @@ class MyAppState extends ChangeNotifier {
       QrData = ZLIBcompressedByteData.join(" ");
       int chunkSize = 2953;
       // print(chunkSize);
-      splitCodes = await splitWithCount(QrData, chunkSize, selectedFile);
+      splitCodes = splitWithCount(QrData, chunkSize, selectedFile);
+      int i = 0;
       for (final code in splitCodes) {
         qrCode = QrCode(QrVersions.max, QrErrorCorrectLevel.L)..addData(code);
+        // var svg = barcode.toSvg(code, width: 100, height: 100);
+        // await File('/storage/emulated/0/flutter_qr_image$i.svg')
+        //     .writeAsString(svg);
         codes.add(qrCode);
+        i++;
+        // log("Code length : ${code.length}");
       }
 
+      if (splitCodes.length > 6) renderError = true;
+      // log("Total codes ${splitCodes.length}");
       // qrImage = QrImage(qrCode);
       // final svg = barcode.toSvg(ZLIBcompressedByteData.join(""),
       //     width: 100, height: 100);
