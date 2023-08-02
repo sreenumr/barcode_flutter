@@ -49,6 +49,7 @@ class BarcodeNavigatorState extends State<BarcodeNavigator> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar:
             // PreferredSize(
             //     preferredSize: const Size.fromHeight(120),

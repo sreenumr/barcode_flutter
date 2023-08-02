@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:barcode_app/widgets/FileDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -97,59 +98,20 @@ class CodePageState extends State<CodePage> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(10.0),
                         child: ElevatedButton(
                             onPressed: () => showDialog<String>(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                    content: const Text('Save As'),
-                                    actions: <Widget>[
-                                      Column(
-                                        children: [
-                                          TextField(
-                                              onChanged: (text) {
-                                                log("Text changed");
-                                                appState.saveAsFileName = text;
-                                              },
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                labelText: 'FileName',
-                                              )),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context, 'Cancel');
-                                              appState.saveAsFileName = "";
-                                            },
-                                            child: const Text('Cancel'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              if (appState
-                                                  .saveAsFileName.isNotEmpty) {
-                                                appState.captureAndSharePng();
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                        const SnackBar(
-                                                  content:
-                                                      Text('QR code saved'),
-                                                ));
-                                                Navigator.pop(context, 'OK');
-                                              }
-                                            },
-                                            child: Text('OK'),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                )
-                            // onPressed: () {
-
-                            // }
-                            ,
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (BuildContext context) => FileDialog(
+                                      onOk: () {
+                                        if (appState
+                                            .saveAsFileName.isNotEmpty) {
+                                          appState.captureAndSharePng();
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                            content: Text('QR code saved'),
+                                          ));
+                                        }
+                                      },
+                                    )),
                             child: const Text("Save QR Code")),
                       ),
                     ),

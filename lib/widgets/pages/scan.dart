@@ -1,4 +1,5 @@
 import 'package:barcode_app/main.dart';
+import 'package:barcode_app/widgets/FileDialog.dart';
 
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -29,6 +30,7 @@ class ScanPageState extends State<ScanPage> {
     var appState = context.watch<MyAppState>();
     resultCodeSet = appState.resultCodeSet;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: <Widget>[
           Expanded(
@@ -76,13 +78,24 @@ class ScanPageState extends State<ScanPage> {
                       )
                     else
                       const Text("Scan QR codes"),
-                    ElevatedButton(
-                        onPressed: appState.reset, child: const Text("Reset"))
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            clearScanned();
+                            appState.resultCodeSet.clear();
+                          },
+                          child: const Text("Reset")),
+                    )
                   ],
                 ),
                 if (resultCodeSet.length == totalChunks && (totalChunks != 0))
                   ElevatedButton(
-                      onPressed: appState.decodeQRCodes,
+                      onPressed: () => showDialog<String>(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext context) =>
+                              FileDialog(onOk: appState.decodeQRCodes)),
                       child: const Text("Click to generate file"))
               ],
             )),
@@ -90,6 +103,12 @@ class ScanPageState extends State<ScanPage> {
         ],
       ),
     );
+  }
+
+  void clearScanned() {
+    setState(() {
+      totalChunks = 0;
+    });
   }
 
   void processQr(String code) {
