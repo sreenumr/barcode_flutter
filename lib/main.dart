@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:developer';
 
@@ -63,7 +62,7 @@ class MyAppState extends ChangeNotifier {
   List<String> splitCodes = [];
   List<QrCode> codes = [];
   Set<String?> resultCodeSet = {};
-
+  bool decodeError = false;
   GlobalKey globalKey = GlobalKey();
 
   void pickFile() async {
@@ -216,23 +215,33 @@ class MyAppState extends ChangeNotifier {
     print("Decoding QR codes");
     // //ext extlength pos noofchunks
     List<String?> qrCodesList = resultCodeSet.toList();
-
+    decodeError = false;
     var charsForChunk = 1;
+    try {
+      qrCodesList.sort((a, b) {
+        var meta_a = a!.split(" ").last.trim();
+        var meta_b = b!.split(" ").last.trim();
+        // print("META :${meta_a}");
+        int posA = int.parse(meta_a[meta_a.length - charsForChunk - 1]);
+        int posB = int.parse(meta_b[meta_b.length - charsForChunk - 1]);
 
-    qrCodesList.sort((a, b) {
-      var meta_a = a!.split(" ").last.trim();
-      var meta_b = b!.split(" ").last.trim();
-      // print("META :${meta_a}");
-      int posA = int.parse(meta_a[meta_a.length - charsForChunk - 1]);
-      int posB = int.parse(meta_b[meta_b.length - charsForChunk - 1]);
-
-      return posA.compareTo(posB);
-    });
+        return posA.compareTo(posB);
+      });
+    } catch (e) {
+      log("An error occured while sorting scanned QR codes : $e");
+      decodeError = true;
+    }
 
     String completeQrData = "";
-    var meta = qrCodesList.first!.split(" ").last.trim();
-    for (final code in qrCodesList) {
-      completeQrData += code!.substring(0, code.length - meta.length);
+    var meta = "";
+    try {
+      meta = qrCodesList.first!.split(" ").last.trim();
+      for (final code in qrCodesList) {
+        completeQrData += code!.substring(0, code.length - meta.length);
+      }
+    } catch (e) {
+      log("An error occured while comining QR codes : $e");
+      decodeError = true;
     }
 
     // //ext extlength pos noofchunks
@@ -244,6 +253,7 @@ class MyAppState extends ChangeNotifier {
       }
     } catch (e) {
       log("An error occured while parsing string $e");
+      decodeError = true;
     }
     try {
       var decodedData = zlib.decode(convertedData);
@@ -254,6 +264,7 @@ class MyAppState extends ChangeNotifier {
       writeFileAsBytes(decodedData, saveAsFileName, fileExt);
     } catch (e) {
       log("An error occurred during decompression ${e.toString()}");
+      decodeError = true;
     }
   }
 }

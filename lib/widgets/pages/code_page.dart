@@ -1,17 +1,7 @@
-import 'dart:developer';
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui';
-
-import 'package:barcode_app/widgets/FileDialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:barcode_app/main.dart';
 import 'package:provider/provider.dart';
-import 'package:page_view_indicators/page_view_indicators.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class CodePage extends StatefulWidget {
   const CodePage({super.key, required this.title});
@@ -105,23 +95,7 @@ class CodePageState extends State<CodePage> with TickerProviderStateMixin {
                                   content: Text('QR code saved'),
                                 ));
                               }
-                            }
-                            // showDialog<String>(
-                            //     barrierDismissible: false,
-                            //     context: context,
-                            //     builder: (BuildContext context) => FileDialog(
-                            //           onOk: () {
-                            //             if (appState
-                            //                 .saveAsFileName.isNotEmpty) {
-                            //               appState.captureAndSharePng();
-                            //               ScaffoldMessenger.of(context)
-                            //                   .showSnackBar(const SnackBar(
-                            //                 content: Text('QR code saved'),
-                            //               ));
-                            //             }
-                            //           },
-                            //         ))
-                            ,
+                            },
                             child: const Text("Save QR Code")),
                       ),
                     ),

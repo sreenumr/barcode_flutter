@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:barcode_app/main.dart';
 import 'package:barcode_app/widgets/FileDialog.dart';
 
@@ -33,12 +35,11 @@ class ScanPageState extends State<ScanPage> {
       resizeToAvoidBottomInset: false,
       body: Column(
         children: <Widget>[
+          if (appState.decodeError)
+            const Text("An error occurred : Invalid QR code"),
           Expanded(
               flex: 3,
               child: SizedBox(
-                  // width: 300.0,
-                  // height: 300.0,
-
                   child: Stack(
                 children: [
                   QrCamera(
@@ -99,7 +100,13 @@ class ScanPageState extends State<ScanPage> {
                           barrierDismissible: false,
                           context: context,
                           builder: (BuildContext context) =>
-                              FileDialog(onOk: appState.decodeQRCodes)),
+                              FileDialog(onOk: () {
+                                appState.decodeQRCodes();
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text('File saved'),
+                                ));
+                              })),
                       child: const Text("Click to generate file"))
               ],
             )),
@@ -117,18 +124,17 @@ class ScanPageState extends State<ScanPage> {
 
   void processQr(String code) {
     setState(() {
-      // result = scanData;
-      // result.add(scanData);
-      // result.add(scanData);
-      // if(scanData.code.length)
       resultCodeSet.add(code);
       if (resultCodeSet.isNotEmpty) {
-        totalChunks = int.parse(
-            resultCodeSet.first!.substring(resultCodeSet.first!.length - 1));
-      }
-      // print("Total Chunks ${totalChunks}");
+        try {
+          totalChunks = int.parse(
+              resultCodeSet.first!.substring(resultCodeSet.first!.length - 1));
+        } catch (e) {
+          log("An error occurred while adding codeSet $e");
 
-      // totalChunks = resultCodeSet.last.substring(resultCodeSet.last.length - 1);
+          resultCodeSet.clear();
+        }
+      }
     });
   }
 
