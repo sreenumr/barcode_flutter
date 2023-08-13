@@ -83,15 +83,15 @@ class ScanPageState extends State<ScanPage> {
                       )
                     else
                       const Text("Scan QR codes"),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                          onPressed: () {
-                            clearScanned();
-                            appState.resultCodeSet.clear();
-                          },
-                          child: const Text("Reset")),
-                    )
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: ElevatedButton(
+                    //       onPressed: () {
+                    //         clearScanned();
+                    //         appState.resultCodeSet.clear();
+                    //       },
+                    //       child: const Text("Reset")),
+                    // )
                   ],
                 ),
                 if (resultCodeSet.length == totalChunks && (totalChunks != 0))
@@ -131,7 +131,6 @@ class ScanPageState extends State<ScanPage> {
               resultCodeSet.first!.substring(resultCodeSet.first!.length - 1));
         } catch (e) {
           log("An error occurred while adding codeSet $e");
-
           resultCodeSet.clear();
         }
       }

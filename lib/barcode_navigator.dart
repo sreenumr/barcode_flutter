@@ -1,5 +1,5 @@
-import 'widgets/pages/home.dart';
-import 'widgets/pages/scan.dart';
+import 'widgets/pages/home_page.dart';
+import 'widgets/pages/scan_page.dart';
 import 'package:flutter/material.dart';
 
 class BarcodeNavigator extends StatefulWidget {

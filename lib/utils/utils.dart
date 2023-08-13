@@ -79,7 +79,7 @@ List<String> splitWithCount(String input, int chunkSize, dynamic selectedFile) {
         "$chunk ${selectedFile.extension}${selectedFile.extension.length.toString()}${pos.toString()}${chunkList.length.toString()}";
     pos++;
     output.add(newChunk);
-    // log("$newChunk");
+    log(newChunk);
   }
 
   return output;

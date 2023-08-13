@@ -38,11 +38,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           ),
-          home: const BarcodeNavigator()
-          // home: const MyHomePage(
-          //   title: "Home",
-          // ),
-          ),
+          home: const BarcodeNavigator()),
     );
   }
 }
@@ -67,9 +63,9 @@ class MyAppState extends ChangeNotifier {
 
   void pickFile() async {
     try {
-      await Permission.manageExternalStorage.request();
       await Permission.storage.request();
       await Permission.camera.request();
+      await Permission.manageExternalStorage.request();
       // requestFilePermission();
       final result = await FilePicker.platform.pickFiles(allowMultiple: false);
       if (result == null) return;
@@ -80,11 +76,13 @@ class MyAppState extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      print(e);
+      log("An error occured while picking file : $e");
     }
   }
 
   Future<void> generateQRCode() async {
+    await Permission.camera.request();
+
     isLoading = true;
     renderError = false;
     var binaryData = await readFileAsBinary(selectedFilePath);
@@ -92,6 +90,7 @@ class MyAppState extends ChangeNotifier {
     var byteData = await readFileAsBytes(selectedFilePath);
 
     // var unicode = utf8.encode(byteData);
+
     var GZIPcompressedByteData = gzip.encode(byteData);
     var ZLIBcompressedByteData = zlib.encode(byteData);
     // log(ZLIBcompressedByteData.toString());
@@ -136,9 +135,9 @@ class MyAppState extends ChangeNotifier {
     // print('base64Unicode  ${base64Unicode.length} bytes');
     // print('base64UnicodeCompressed  ${base64UnicodeCompressed.length} bytes');
 
-    // print('Bytes  ${byteData.length} bytes');
-    // print('GZIPcompressed ${GZIPcompressedByteData.length} bytes');
-    // print('ZLIBcompressed ${ZLIBcompressedByteData.length} bytes');
+    print('Bytes  ${byteData.length} bytes');
+    print('GZIPcompressed ${GZIPcompressedByteData.length} bytes');
+    print('ZLIBcompressed ${ZLIBcompressedByteData.length} bytes');
     // print('ZLIBcompressed ${ZLIBcompressedByteData} bytes');
 
     // print('Binary  ${unicode.length} bytes');
@@ -168,12 +167,6 @@ class MyAppState extends ChangeNotifier {
       }
 
       if (splitCodes.length > 6) renderError = true;
-      // log("Total codes ${splitCodes.length}");
-      // qrImage = QrImage(qrCode);
-      // final svg = barcode.toSvg(ZLIBcompressedByteData.join(""),
-      //     width: 100, height: 100);
-
-      // await File('/storage/emulated/0/flutter_qr_image.svg').writeAsString(svg);
 
       isLoading = false;
     } on InputTooLongException catch (e) {
@@ -183,7 +176,7 @@ class MyAppState extends ChangeNotifier {
       isLoading = false;
     } catch (e) {
       renderError = true;
-      print('An error occurred: $e');
+      log('An error occurred: $e');
       isLoading = false;
     }
     notifyListeners();
@@ -203,7 +196,7 @@ class MyAppState extends ChangeNotifier {
 
       // await Share.file(_dataString, '$_dataString.png', pngBytes, 'image/png');
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
     }
   }
 
@@ -212,18 +205,17 @@ class MyAppState extends ChangeNotifier {
   }
 
   void decodeQRCodes() {
-    print("Decoding QR codes");
+    log("Decoding QR codes");
     // //ext extlength pos noofchunks
     List<String?> qrCodesList = resultCodeSet.toList();
     decodeError = false;
     var charsForChunk = 1;
     try {
       qrCodesList.sort((a, b) {
-        var meta_a = a!.split(" ").last.trim();
-        var meta_b = b!.split(" ").last.trim();
-        // print("META :${meta_a}");
-        int posA = int.parse(meta_a[meta_a.length - charsForChunk - 1]);
-        int posB = int.parse(meta_b[meta_b.length - charsForChunk - 1]);
+        var metaA = a!.split(" ").last.trim();
+        var metaB = b!.split(" ").last.trim();
+        int posA = int.parse(metaA[metaA.length - charsForChunk - 1]);
+        int posB = int.parse(metaB[metaB.length - charsForChunk - 1]);
 
         return posA.compareTo(posB);
       });
